@@ -1,18 +1,14 @@
-import { IBaseView } from "../../modules/core/IBaseView";
+import { BaseView } from "../../modules/core/BaseView";
 import { ScreenUtilController } from "../../modules/screenutility/ScreenUtilController";
 import { Assets } from "../../library/AssetGameplay";
-import { Button } from "../../modules/gameobjects/Button";
-import { Image } from "../../modules/gameobjects/Image";
-import { FontAsset } from "../../library/AssetFont";
 
 export const enum EventNames {
 	onPlaySFXClick = "onPlaySFXClick",
-	// onClickLogo = "onClickLogo",
 	onClickRestart = "onClickRestart",
 	onCreateFinish = "onCreateFinish",
 };
 
-export class GameplaySceneView implements IBaseView {
+export class GameplaySceneView implements BaseView {
 
 	event: Phaser.Events.EventEmitter;
 	screenUtility: ScreenUtilController;
