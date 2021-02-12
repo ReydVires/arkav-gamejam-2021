@@ -1,0 +1,17 @@
+body {
+	background-color: #181818;
+	margin: 0px 0px;
+	overflow-y: hidden;
+	overflow-x: hidden;
+}
+
+body #game {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+a, button {
+	-ms-touch-action: manipulation; /* IE10  */
+	touch-action: manipulation; /* IE11+ */
+}

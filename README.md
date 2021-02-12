@@ -1,4 +1,4 @@
-# Phaser 3 Typescript Template
+# arkav-gamejam-2021
 
 <img src='https://img.shields.io/badge/Version-0.8.5-brightgreen'  alt="Version: 0.8.5"/>
 <img src='https://img.shields.io/badge/Status-Maintained-brightgreen'  alt="Status: Maintained"/>
@@ -27,4 +27,3 @@ In `package.json` file and section `scripts` listed handy commands to help your 
 ## ESlint
 
 For update [eslint rules](https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin/docs/rules)
-# arkav-gamejam-2021
