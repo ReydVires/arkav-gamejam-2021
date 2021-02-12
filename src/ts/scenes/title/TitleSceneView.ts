@@ -86,11 +86,12 @@ export class TitleSceneView implements IBaseView {
 
 	private createText (): void {
 		const { centerX, centerY, width, screenPercentage } = this.screenUtility;
-		const content = "A Quick Brown Fox Jumped Over The Lazy Dog's Back 1234567890";
-		const fontSize = 45;
+		const content = "Arkav Game Jam\n2021";
+		const fontSize = 52;
 		const style = <Phaser.Types.GameObjects.Text.TextStyle> {
 			fontFamily: FontAsset.roboto.key,
 			color: "#fafafa",
+			fontStyle: "bold",
 			wordWrap: { width: width * 0.95 },
 			align: "center",
 		};
