@@ -27,6 +27,7 @@ export class TitleSceneController extends Phaser.Scene {
 		});
 		this.onCreateFinish(() => {
 			this.playBGMWhenReady();
+			this.audioController.mute();
 		});
 	}
 

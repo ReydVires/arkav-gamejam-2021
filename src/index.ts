@@ -8,8 +8,10 @@ import { ToastPlugin } from './ts/modules/plugin/ToastPlugin';
 // eslint-disable-next-line no-console
 if (CONFIG.ENABLE_LOG) console.log("[CONFIG]", CONFIG);
 
-const isFirefox = /Firefox/i.test(navigator.userAgent);
-const renderType = isFirefox ? Phaser.WEBGL : Phaser.CANVAS;
+const renderType = (): number => {
+	const isFirefox = /Firefox/i.test(navigator.userAgent);
+	return isFirefox ? Phaser.WEBGL : Phaser.CANVAS;
+}
 
 type CalculateScreenType = {
 	actualWidth: number,
@@ -59,7 +61,7 @@ const screenProfile = calculateScreen();
 const gameConfig: Phaser.Types.Core.GameConfig = {
 	version: CONFIG.VERSION,
 	banner: { hidePhaser: !CONFIG.ENABLE_LOG },
-	type: renderType,
+	type: renderType(),
 	parent: 'game',
 	backgroundColor: (CONFIG.ON_DEBUG) ? '#3498db' : '#181818',
 	scale: {
