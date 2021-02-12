@@ -1,11 +1,11 @@
 {
-  "name": "phaser-3-webpack-template",
-  "version": "0.8.5",
+  "name": "arkav-gamejam-2021",
+  "version": "0.0.1",
   "description": "Webpack + Typescript for Phaser 3",
   "main": "src/index.js",
   "author": "ReydVires",
   "repository": {
-    "url": "https://gategit.agate.id/ahmad.fire/phaser-3-webpack-template"
+    "url": "https://github.com/ReydVires/arkav-gamejam-2021"
   },
   "scripts": {
     "dev": "webpack-dev-server --config webpack/webpack.dev.js --env.build=game-dev --host --open",
