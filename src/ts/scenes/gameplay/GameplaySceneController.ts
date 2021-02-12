@@ -28,12 +28,8 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.cameraController.init();
 		this.debugController.init();
 
-		const resizeEndListener = (): void => {
-			this.debugController.log(`[On resize]\ndocumentSize:\nwidth: ${window.innerWidth}, hight: ${window.innerHeight}`);
-		};
 		this.onPlaySFXClick(() => this.audioController.playSFX(Audios.sfx_click.key));
 		this.onClickRestart(() => {
-			window.document.removeEventListener("resizeEnd", resizeEndListener, false);
 			this.scene.start(SceneInfo.TITLE.key);
 		});
 		this.onCreateFinish((uiView) => {
