@@ -1,9 +1,31 @@
+import { EventNames, PlayerView } from "./PlayerView";
+
+type OnDamaged = (life: number) => void;
+
 export class PlayerController {
 
-	constructor () {}
+	private _view: PlayerView;
 
-	init (): void {}
+	constructor (scene: Phaser.Scene) {
+		this._view = new PlayerView(scene);
+	}
 
-	update (): void {}
+	init (displayPercentage: number, edges: number[]): void {
+		this._view.create(displayPercentage, edges);
+	}
+
+	registerOverlap (target: Phaser.GameObjects.GameObject | Phaser.Physics.Arcade.Group, collideCallback: ArcadePhysicsCallback): void {
+		this._view.registerOverlap(target, collideCallback);
+	}
+
+	damaged (): void {
+		this._view.damaged();
+	}
+
+	update (time: number, dt: number): void {}
+
+	onDamaged (events: OnDamaged): void {
+		this._view.event.on(EventNames.onDamaged, events);
+	}
 
 }

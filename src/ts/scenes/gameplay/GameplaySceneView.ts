@@ -1,6 +1,5 @@
 import { BaseView } from "../../modules/core/BaseView";
 import { ScreenUtilController } from "../../modules/screenutility/ScreenUtilController";
-import { Assets } from "../../library/AssetGameplay";
 
 export const enum EventNames {
 	onPlaySFXClick = "onPlaySFXClick",

@@ -77,6 +77,13 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
 			{ key: "ToastPlugin", plugin: ToastPlugin, mapping: "toast" },
 		]
 	},
+	physics: {
+		default: "arcade",
+		arcade: {
+			gravity: { y: 0 },
+			debug: CONFIG.ENABLE_PHYSICS_DEBUG,
+		}
+	},
 	scene: SceneList(),
 	input: { activePointers: 3 },
 	dom: {
