@@ -1,0 +1,13 @@
+Reference :
+ 
+https://id.pinterest.com/pin/6192518226799503/
+https://id.pinterest.com/pin/310185493079065119/
+https://id.pinterest.com/pin/46865652361770294/
+https://id.pinterest.com/pin/158681586850806703/
+https://id.pinterest.com/pin/298996862763371166/
+
+List Asset UI yg dibutuhkan :
+ - Font Styling Judul
+ - Rectangle Buttons (For Start, Exit)
+ - Square Buttons (For Retry, Home button)
+ - Place holder 3 sizes (Score, Paused, Game Over)
