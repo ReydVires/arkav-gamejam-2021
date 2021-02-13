@@ -75,9 +75,7 @@ export class ObstacleView implements BaseView {
 			inputPlugin.setDraggable(gameObject);
 			inputPlugin.dragDistanceThreshold = 32 * gameObject.getData(DataProps.displayPercentage);
 
-			gameObject.on("pointerdown", () => {
-				gameObject.setVelocity(0);
-			});
+			gameObject.on("dragstart", () => gameObject.setVelocity(0));
 			gameObject.on("drag", (p: Phaser.Input.Pointer) => {
 				gameObject.x = p.x;
 			});
