@@ -7,6 +7,7 @@ import { DebugController } from "./debug/DebugController";
 import { SceneInfo } from "../../info/SceneInfo";
 import { PlayerController } from "./player/PlayerController";
 import { BackgroundController } from "./background/BackgroundController";
+import { ObstacleController } from "./obstacle/ObstacleController";
 
 type OnCreateFinish = (...args: unknown[]) => void;
 
@@ -16,8 +17,9 @@ export class GameplaySceneController extends Phaser.Scene {
 	audioController: AudioController;
 	cameraController: CameraController;
 	debugController: DebugController;
-	playerController: PlayerController;
 	bgController: BackgroundController;
+	playerController: PlayerController;
+	obstacleController: ObstacleController;
 
 	constructor () {
 		super({key: SceneInfo.GAMEPLAY.key});
@@ -30,12 +32,18 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.debugController = new DebugController(this);
 		this.bgController = new BackgroundController(this);
 		this.playerController = new PlayerController(this);
+		this.obstacleController = new ObstacleController(this);
 
 		this.cameraController.init();
 		this.debugController.init();
 		this.bgController.init();
 		this.playerController.init(
-			this.bgController.displayPercentage()
+			this.bgController.displayPercentage(),
+			this.bgController.getEdge()
+		);
+		this.obstacleController.init(
+			this.bgController.displayPercentage(),
+			this.bgController.getEdge()
 		);
 
 		this.onPlaySFXClick(() => this.audioController.playSFX(Audios.sfx_click.key));
@@ -59,6 +67,7 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.cameraController.update(time, dt);
 		this.bgController.update(time, dt);
 		this.playerController.update(time, dt);
+		this.obstacleController.update(time, dt);
 	}
 
 	onPlaySFXClick (event: Function): void {
