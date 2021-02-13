@@ -5,6 +5,6 @@ export interface BaseView {
 	event: Phaser.Events.EventEmitter;
 	screenUtility: ScreenUtilController;
 
-	create (sceneData?: unknown): void;
+	create (...sceneData: unknown[]): void;
 
 }
