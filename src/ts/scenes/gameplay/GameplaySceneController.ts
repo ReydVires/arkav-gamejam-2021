@@ -26,6 +26,7 @@ export class GameplaySceneController extends Phaser.Scene {
 	}
 
 	init (): void {
+		this.toast.configure(this);
 		this.view = new GameplaySceneView(this);
 		this.audioController = AudioController.getInstance();
 		this.cameraController = new CameraController(this);
@@ -46,10 +47,23 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.bgController.getEdge()
 		);
 
-		this.onPlaySFXClick(() => this.audioController.playSFX(Audios.sfx_click.key));
-		this.onClickRestart(() => {
-			this.scene.start(SceneInfo.TITLE.key);
+		this.playerController.registerOverlap(
+			this.obstacleController.obstacles(),
+			(player, obstacle) => {
+				this.playerController.damaged();
+				this.obstacleController.deactiveObstacle(obstacle);
+			}
+		);
+
+		this.playerController.onDamaged((life) => {
+			this.toast.show((life > 0) ? `Player damaged. ${life} chance left!` : `Game over!`);
+			if (life) return;
+			this.input.enabled = false;
+			this.time.delayedCall(1500, () => this.scene.start(SceneInfo.TITLE.key));
 		});
+
+		this.onPlaySFXClick(() => this.audioController.playSFX(Audios.sfx_click.key));
+		this.onClickRestart(() => this.scene.start(SceneInfo.TITLE.key));
 		this.onCreateFinish((uiView: Phaser.GameObjects.Container) => {
 			this.cameraController.registerGameobjectInCamera(uiView, CameraKeyList.UI);
 			this.debugController.show(true);
