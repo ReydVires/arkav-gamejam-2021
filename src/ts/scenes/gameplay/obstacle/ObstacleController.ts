@@ -19,12 +19,12 @@ export class ObstacleController {
 	private deactiveObstacle (gameObject: Phaser.Physics.Arcade.Sprite): void {
 		const deactiveThreshold = gameObject.getData(DataProps.deactiveThreshold) as number;
 		if (gameObject.y >= deactiveThreshold) return;
-		this._view.deactiveObstacle(gameObject);
+		this._view.deactiveGameObject(gameObject);
 	}
 
 	update (time: number, dt: number): void {
 		this._view.obstacles.forEach((obstacle) => {
-			(obstacle.gameObject.active) && this.deactiveObstacle(obstacle.gameObject);
+			(obstacle.active) && this.deactiveObstacle(obstacle);
 		});
 
 		const timeLoss = dt * 0.5;
