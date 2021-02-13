@@ -25,6 +25,7 @@ export class ObstacleView implements BaseView {
 
 	private _maxTimeToSpawn: number;
 	private _obstacleSprites: Phaser.Physics.Arcade.Sprite[];
+	private _emitter: Phaser.GameObjects.Particles.ParticleEmitter;
 
 	constructor (private _scene: Phaser.Scene) {
 		this.screenUtility = ScreenUtilController.getInstance();
@@ -64,6 +65,7 @@ export class ObstacleView implements BaseView {
 				let prevCounter: number = gameObject.getData(dataProps.counter) ?? 0;
 				if (++prevCounter >= 2) {
 					gameObject.setData(dataProps.counter, 0);
+					this.playParticle(gameObject);
 					this.deactiveGameObject(gameObject);
 					return;
 				}
@@ -79,11 +81,22 @@ export class ObstacleView implements BaseView {
 			gameObject.on("drag", (p: Phaser.Input.Pointer, dragX: number) => {
 				gameObject.x = dragX;
 			});
-			gameObject.on("dragend", () => this.deactiveGameObject(gameObject));
+			gameObject.on("dragend", () => {
+				gameObject.disableInteractive();
+				this._scene.tweens.add({
+					targets: gameObject,
+					alpha: 0,
+					duration: 150,
+					onComplete: () => {
+						this.deactiveGameObject(gameObject);
+						gameObject.setAlpha(1);
+					}
+				});
+			});
 			break;
 		default:
 			gameObject.once("pointerup", () => {
-				// TODO: Play particle
+				this.playParticle(gameObject);
 				this.deactiveGameObject(gameObject);
 			});
 			break;
@@ -130,6 +143,33 @@ export class ObstacleView implements BaseView {
 		this.setInteractive(gameObject);
 	}
 
+	private createParticleEmitter (): void {
+		this._emitter = this._scene.add.particles(Assets.white_effect.key).createEmitter({
+			scale: { start: 1, end: 0 },
+			speed: { min: 0, max: 240 },
+			angle: 270,
+			gravityY: -98,
+			active: false,
+			lifespan: 550,
+			quantity: 50
+		});
+	}
+
+	private playParticle (gameObject: Phaser.Physics.Arcade.Sprite): void {
+		const { displayWidth: width, displayHeight: height } = gameObject;
+		const { x, y } = gameObject.getTopLeft();
+		const ratio = gameObject.getData(DataProps.displayPercentage) as number;
+		const count = 45 * ratio;
+
+		this._emitter.active = true;
+		this._emitter.setEmitZone({
+			source: new Phaser.Geom.Rectangle(0, 0, (width), (height)),
+			quantity: count,
+			type: "random"
+		});
+		this._emitter.explode(count, x, y);
+	}
+
 	deactiveGameObject (gameObject: Phaser.Physics.Arcade.Sprite): void {
 		gameObject.setVelocity(0).disableBody(true, true);
 		gameObject.removeAllListeners();
@@ -137,6 +177,7 @@ export class ObstacleView implements BaseView {
 	}
 
 	create (displayPercentage: number, edges: number[]): void {
+		this.createParticleEmitter();
 		this.event.on(EventNames.onSpawn, () => {
 			const assetType = this.getAssetTypeKey();
 			const obstacle = this._obstacleSprites.find((obstacle) => !obstacle.active && (obstacle.getData(DataProps.assetType) === assetType));
