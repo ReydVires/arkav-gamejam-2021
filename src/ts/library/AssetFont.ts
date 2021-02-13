@@ -13,6 +13,11 @@ export const FontAsset = {
 		path: 'fonts/Roboto-Regular.ttf',
 		type: AssetType.FONT
 	},
+	potta: {
+		key: 'potta',
+		path: 'fonts/PottaOne-Regular.ttf',
+		type: AssetType.FONT
+	},
 
 };
 
