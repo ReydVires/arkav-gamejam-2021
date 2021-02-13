@@ -16,15 +16,21 @@ export class ObstacleController {
 		this._view.props.timeToSpawn += this._view.maxTimeToSpawn;
 	}
 
-	private deactiveObstacle (gameObject: Phaser.Physics.Arcade.Sprite): void {
-		const deactiveThreshold = gameObject.getData(DataProps.deactiveThreshold) as number;
-		if (gameObject.y >= deactiveThreshold) return;
-		this._view.deactiveGameObject(gameObject);
+	deactiveObstacle (gameObject: Phaser.GameObjects.GameObject): void {
+		this._view.deactiveGameObject(gameObject as Phaser.Physics.Arcade.Sprite);
+	}
+
+	obstacles (): Phaser.Physics.Arcade.Group {
+		return this._view.obstacles;
 	}
 
 	update (time: number, dt: number): void {
-		this._view.obstacles.forEach((obstacle) => {
-			(obstacle.active) && this.deactiveObstacle(obstacle);
+		this._view.obstacles.getChildren().forEach((obstacle) => {
+			const gameObject = obstacle as Phaser.Physics.Arcade.Sprite;
+			if (gameObject.active) {
+				const deactiveThreshold = gameObject.getData(DataProps.deactiveThreshold) as number;
+				if (gameObject.y < deactiveThreshold) this.deactiveObstacle(gameObject);
+			}
 		});
 
 		const timeLoss = dt * 0.5;
