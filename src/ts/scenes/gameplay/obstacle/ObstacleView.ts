@@ -24,18 +24,17 @@ export class ObstacleView implements BaseView {
 	};
 
 	private _maxTimeToSpawn: number;
-	private _obstacleSprites: Phaser.Physics.Arcade.Sprite[];
+	private _obstacleGroup: Phaser.Physics.Arcade.Group;
 	private _emitter: Phaser.GameObjects.Particles.ParticleEmitter;
 
 	constructor (private _scene: Phaser.Scene) {
 		this.screenUtility = ScreenUtilController.getInstance();
 		this.event = new Phaser.Events.EventEmitter();
 		this._maxTimeToSpawn = 1000;
-		this._obstacleSprites = [];
 	}
 
-	get obstacles (): Phaser.Physics.Arcade.Sprite[] {
-		return this._obstacleSprites;
+	get obstacles (): Phaser.Physics.Arcade.Group {
+		return this._obstacleGroup;
 	}
 
 	get maxTimeToSpawn (): number {
@@ -86,7 +85,7 @@ export class ObstacleView implements BaseView {
 				this._scene.tweens.add({
 					targets: gameObject,
 					alpha: 0,
-					duration: 150,
+					duration: 100,
 					onComplete: () => {
 						this.deactiveGameObject(gameObject);
 						gameObject.setAlpha(1);
@@ -106,9 +105,11 @@ export class ObstacleView implements BaseView {
 	private spawnObstacle (displayPercentage: number, edges: number[], assetType: string): void {
 		const [leftEdge, rightEdge, topEdge, bottomEdge] = edges;
 		const spawnPosY = bottomEdge;
-		const speedRelative = -190;
+		const speedRelative = -230;
 
 		const obstacle = new ArcadeSprite(this._scene, 0, 0, assetType, 0);
+		this._obstacleGroup.add(obstacle.gameObject);
+
 		obstacle.transform.setToScaleDisplaySize(displayPercentage);
 		obstacle.gameObject.setData(DataProps.assetType, assetType);
 		obstacle.gameObject.setData(DataProps.displayPercentage, displayPercentage);
@@ -122,8 +123,6 @@ export class ObstacleView implements BaseView {
 		obstacle.gameObject.setVelocityY(speedRelative * displayPercentage);
 
 		this.setInteractive(obstacle.gameObject);
-
-		this._obstacleSprites.push(obstacle.gameObject);
 	}
 
 	private reuseObstacle (gameObject: Phaser.Physics.Arcade.Sprite): void {
@@ -136,7 +135,7 @@ export class ObstacleView implements BaseView {
 			bottom + (gameObject.displayHeight / 2)
 		);
 
-		const speedRelative = -190;
+		const speedRelative = -230;
 		const displayPercentage = gameObject.getData(DataProps.displayPercentage) as number;
 		gameObject.setVelocityY(speedRelative * displayPercentage);
 
@@ -177,12 +176,14 @@ export class ObstacleView implements BaseView {
 	}
 
 	create (displayPercentage: number, edges: number[]): void {
+		this._obstacleGroup = this._scene.physics.add.group();
 		this.createParticleEmitter();
 		this.event.on(EventNames.onSpawn, () => {
 			const assetType = this.getAssetTypeKey();
-			const obstacle = this._obstacleSprites.find((obstacle) => !obstacle.active && (obstacle.getData(DataProps.assetType) === assetType));
+			const obstacle = this._obstacleGroup.getChildren()
+				.find((obstacle) => !obstacle.active && (obstacle.getData(DataProps.assetType) === assetType));
 			if (obstacle) {
-				this.reuseObstacle(obstacle);
+				this.reuseObstacle(obstacle as Phaser.Physics.Arcade.Sprite);
 				return;
 			}
 			this.spawnObstacle(displayPercentage, edges, assetType);
