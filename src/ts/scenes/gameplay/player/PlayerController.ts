@@ -1,9 +1,17 @@
+import { PlayerView } from "./PlayerView";
+
 export class PlayerController {
 
-	constructor () {}
+	private _view: PlayerView;
 
-	init (): void {}
+	constructor (scene: Phaser.Scene) {
+		this._view = new PlayerView(scene);
+	}
 
-	update (): void {}
+	init (displayPercentage: number): void {
+		this._view.create(displayPercentage);
+	}
+
+	update (time: number, dt: number): void {}
 
 }
