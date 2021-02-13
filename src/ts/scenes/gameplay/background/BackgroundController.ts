@@ -18,4 +18,8 @@ export class BackgroundController {
 		return this._view.displayHeightRatio;
 	}
 
+	getEdge (): number[] {
+		return this._view.getEdge;
+	}
+
 }

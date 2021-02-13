@@ -18,6 +18,15 @@ export class BackgroundView implements BaseView {
 		return this._sprite.transform.displayToOriginalHeightRatio;
 	}
 
+	get getEdge (): number [] {
+		return [
+			this._sprite.gameObject.getLeftCenter().x,
+			this._sprite.gameObject.getRightCenter().x,
+			this._sprite.gameObject.getTopCenter().y,
+			this._sprite.gameObject.getBottomCenter().y,
+		];
+	}
+
 	create (): void {
 		const { centerX, centerY, width, height } = this.screenUtility;
 		this._sprite = new Rectangle(this._scene, centerX, centerY, 1080, 1920, 0xb2bec3, 1);
