@@ -62,7 +62,7 @@ export class GraphicsButton {
 		return this._sprite;
 	}
 
-	get label ():Phaser.GameObjects.Text {
+	get label (): Phaser.GameObjects.Text {
 		return this._label;
 	}
 
