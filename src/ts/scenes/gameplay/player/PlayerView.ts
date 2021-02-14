@@ -32,7 +32,7 @@ export class PlayerView implements BaseView {
 		const [left, right, top, bottom] = edges;
 		this._sprite = new ArcadeSprite(this._scene, 0, 0, Assets.player_raft_ride.key);
 		this._sprite.transform.setToScaleDisplaySize(displayPercentage * 2);
-		this._sprite.gameObject.setPosition(centerX, top + this._sprite.transform.displayHeight + (height * 0.15));
+		this._sprite.gameObject.setPosition(centerX, top + this._sprite.transform.displayHeight + (height * 0.175));
 
 		const animInfoType = Animations.player_raft_ride as CustomTypes.Asset.AnimationInfoType;
 		AnimationHelper.AddAnimation(this._scene, animInfoType);

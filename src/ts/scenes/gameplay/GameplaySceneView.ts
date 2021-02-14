@@ -77,18 +77,12 @@ export class GameplaySceneView implements BaseView {
 		});
 
 		startBtn.gameObject.setInteractive({useHandCursor: true}).once("pointerdown", () => {
+			this.event.emit(EventNames.onPlaySFXClick);
 			startBtnEffect.play();
 		});
 
-		const contentTitle = "Raka's Journey";
-		const fontTitleSize = 72 * this._displayPercentage;
-		const titleText = new Text(this._scene, centerX, height * 0.15, contentTitle, {
-			fontFamily: FontAsset.potta.key,
-			fontSize: `${fontTitleSize}px`,
-			align: "center",
-			fontStyle: "bold"
-		});
-		titleText.gameObject.setOrigin(0.5);
+		const logo = new Image(this._scene, centerX, height * 0.15, Assets.logo_title.key);
+		logo.transform.setToScaleDisplaySize(this._displayPercentage);
 
 		const contentCredit = "Made by: Yeager, Mastra, Hasbi, Savira, Witsqa";
 		const fontSize = 38 * this._displayPercentage;
@@ -101,7 +95,7 @@ export class GameplaySceneView implements BaseView {
 
 		this._uiTitleScreen = this._scene.add.container().setDepth(UI_LAYER);
 		this._uiTitleScreen.setSize(width, height);
-		this._uiTitleScreen.add([titleText.gameObject, startBtn.gameObject, creditText.gameObject]);
+		this._uiTitleScreen.add([logo.gameObject, startBtn.gameObject, creditText.gameObject]);
 	}
 
 	setScore (score: number): void {
