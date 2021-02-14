@@ -83,5 +83,26 @@ export const Assets = {
 		height: 98,
 		type: AssetType.SPRITESHEET
 	},
+	obstacle_log: {
+		key: 'obstacle_log',
+		url: 'img/obstacles/spr_obstacle_log.png',
+		width: 2304/6,
+		height: 72,
+		type: AssetType.SPRITESHEET
+	},
+	obstacle_rockes: {
+		key: 'obstacle_rockes',
+		url: 'img/obstacles/spr_obstacle_rockes.png',
+		width: 640/5,
+		height: 128,
+		type: AssetType.SPRITESHEET
+	},
+	obstacle_trashes: {
+		key: 'obstacle_trashes',
+		url: 'img/obstacles/spr_obstacle_trashes.png',
+		width: 2250/5,
+		height: 192,
+		type: AssetType.SPRITESHEET
+	},
 
 };
