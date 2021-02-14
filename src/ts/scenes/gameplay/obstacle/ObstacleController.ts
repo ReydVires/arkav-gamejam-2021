@@ -52,7 +52,7 @@ export class ObstacleController {
 
 		if(this._view.obsHoldCondition){
 			this._view.obsHoldCounter += 1;
-			console.log(this._view.obsHoldCounter);
+			console.log('controller', this._view.obsHoldCounter);
 
 			// become bigger
 			// sprite tinted light green and lighter  

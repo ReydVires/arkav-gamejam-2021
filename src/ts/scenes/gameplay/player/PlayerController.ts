@@ -34,8 +34,6 @@ export class PlayerController {
 			this._view.props.life += 1;
 			this.setHealthBonusActive(true);
 			console.log('masuk ke health bonus status false, health udah nambah', this._view.props.life)
-		}else {
-			
 		}
 		// animasi nambah health/tameng di view
 	}
