@@ -1,5 +1,7 @@
 import { DataProps, EventNames, ObstacleView } from "./ObstacleView";
 
+type OnDestroy = (type: string) => void;
+
 export class ObstacleController {
 
 	private _view: ObstacleView;
@@ -55,6 +57,10 @@ export class ObstacleController {
 			// become bigger
 			// sprite tinted light green and lighter  
 		}
+	}
+
+	onDestroy (events: OnDestroy): void {
+		this._view.event.on(EventNames.onDestroy, events);
 	}
 
 }

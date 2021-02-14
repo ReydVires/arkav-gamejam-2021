@@ -46,6 +46,11 @@ export const Assets = {
 		url: 'img/bg/img_forest_parallax.png',
 		type: AssetType.STATIC
 	},
+	logo_title: {
+		key: 'logo_title',
+		url: 'img/gui/img_logo_title.png',
+		type: AssetType.STATIC
+	},
 
 	// Spritesheet
 	player_raft_ride: {

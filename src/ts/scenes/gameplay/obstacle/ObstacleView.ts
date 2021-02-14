@@ -17,6 +17,7 @@ export const enum DataProps {
 export const enum EventNames {
 	onSpawn = "onSpawn",
 	onTap = "onTap",
+	onDestroy = "onDestroy",
 };
 
 export class ObstacleView implements BaseView {
@@ -79,6 +80,7 @@ export class ObstacleView implements BaseView {
 					gameObject.setData(dataProps.counter, 0);
 					this.playParticle(gameObject);
 					this.deactiveGameObject(gameObject, true);
+					this.event.emit(EventNames.onDestroy, Assets.obstacle_rockes.key);
 					return;
 				}
 				gameObject.setData(dataProps.counter, prevCounter);
@@ -113,10 +115,6 @@ export class ObstacleView implements BaseView {
 					targets: gameObject,
 					alpha: 1,
 					duration: 100,
-					// onComplete: () => {
-					// 	this.deactiveGameObject(gameObject);
-					// 	gameObject.setAlpha(1);
-					// }
 				});
 			});
 			break;
@@ -141,6 +139,7 @@ export class ObstacleView implements BaseView {
 			gameObject.once("pointerup", () => {
 				this.playParticle(gameObject);
 				this.deactiveGameObject(gameObject, true);
+				this.event.emit(EventNames.onDestroy, Assets.obstacle_trashes.key);
 			});
 			break;
 		}
