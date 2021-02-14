@@ -1,8 +1,6 @@
 import { AudioController } from "../../modules/audio/AudioController";
-import { CameraKeyList } from "../../info/GameInfo";
 import { Audios } from "../../library/AssetAudio";
 import { EventNames, GameplaySceneView } from "./GameplaySceneView";
-import { CameraController } from "./camera/CameraController";
 import { DebugController } from "./debug/DebugController";
 import { SceneInfo } from "../../info/SceneInfo";
 import { PlayerController } from "./player/PlayerController";
@@ -16,7 +14,6 @@ export class GameplaySceneController extends Phaser.Scene {
 
 	view: GameplaySceneView;
 	audioController: AudioController;
-	// cameraController: CameraController;
 	debugController: DebugController;
 	gameController: GameController;
 	bgController: BackgroundController;
@@ -31,14 +28,12 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.toast.configure(this);
 		this.view = new GameplaySceneView(this);
 		this.audioController = AudioController.getInstance();
-		// this.cameraController = new CameraController(this); // FIXME: For title screen mode
 		this.debugController = new DebugController(this);
 		this.gameController = new GameController();
 		this.bgController = new BackgroundController(this);
 		this.playerController = new PlayerController(this);
 		this.obstacleController = new ObstacleController(this);
 
-		// this.cameraController.init();
 		this.debugController.init();
 		this.gameController.init();
 		this.bgController.init();
@@ -68,13 +63,20 @@ export class GameplaySceneController extends Phaser.Scene {
 			if (life) return;
 
 			this.input.enabled = false;
-			this.time.delayedCall(1500, () => this.scene.start(SceneInfo.TITLE.key));
+			this.time.delayedCall(1500, () => {
+				this.gameController.gameOverState();
+				this.scene.restart(); // FIXME
+			});
 		});
 
+		this.onClickStart(() => {
+			this.view.hideTitleScreen();
+			this.gameController.playState();
+		});
 		this.onPlaySFXClick(() => this.audioController.playSFX(Audios.sfx_click.key));
 		this.onClickRestart(() => this.scene.start(SceneInfo.TITLE.key));
-		this.onCreateFinish((uiView: Phaser.GameObjects.Container) => {
-			// this.cameraController.registerGameobjectInCamera(uiView, CameraKeyList.UI);
+
+		this.onCreateFinish(() => {
 			this.debugController.show(true);
 		});
 	}
@@ -85,33 +87,19 @@ export class GameplaySceneController extends Phaser.Scene {
 		);
 	}
 
-	private zoomInCamera (): void {
-		const { x, y } = this.playerController.position();
-		const cam = this.cameras.main;
-		cam.pan(x, y, 675, "Linear");
-		cam.zoomTo(4, 700);
-	}
-
-	private zoomOutCamera (): void {
-		const cam = this.cameras.main;
-		cam.pan(cam.centerX, cam.centerY, 1000, "Power2");
-		cam.zoomTo(1, 750);
-	}
-
 	update (time: number, dt: number): void {
 		if (this.view.restartKey.isDown) {
 			this.view.event.emit(EventNames.onClickRestart);
 		}
 		if (Phaser.Input.Keyboard.JustDown(this.view.debugKey)) {
-			const cam = this.cameras.main;
-			(cam.zoom !== 1) ? this.zoomOutCamera() : this.zoomInCamera();
+			// pass
 		}
-		// this.cameraController.update(time, dt);
-		this.gameController.update(time, dt);
+
+		if (this.gameController.state === "GAME") this.gameController.update(time, dt);
 		this.bgController.update(time, dt);
 		this.playerController.update(time, dt);
-		this.obstacleController.update(time, dt);
-
+		if (this.gameController.state === "GAME") this.obstacleController.update(time, dt);
+    
 		if(this.obstacleController.getDeactivatedBonus()){
 			this.playerController.healthBonus();
 			this.obstacleController.setDeactivatedBonus(false);
@@ -124,6 +112,10 @@ export class GameplaySceneController extends Phaser.Scene {
 
 	onClickRestart (event: Function): void {
 		this.view.event.on(EventNames.onClickRestart, event);
+	}
+
+	onClickStart (event: Function): void {
+		this.view.event.on(EventNames.onClickStart, event);
 	}
 
 	onCreateFinish (event: OnCreateFinish): void {

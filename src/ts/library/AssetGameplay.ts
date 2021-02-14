@@ -32,11 +32,6 @@ export const Assets = {
 		url: 'img/particle/img_white_effect.png',
 		type: AssetType.STATIC
 	},
-	btn_exit: {
-		key: 'btn_exit',
-		url: 'img/gui/img_btn_exit.png',
-		type: AssetType.STATIC
-	},
 	btn_start: {
 		key: 'btn_start',
 		url: 'img/gui/img_btn_start.png',
@@ -47,10 +42,51 @@ export const Assets = {
 		url: 'img/gui/img_btn_pause.png',
 		type: AssetType.STATIC
 	},
+	btn_retry: {
+		key: 'btn_retry',
+		url: 'img/gui/img_btn_retry.png',
+		type: AssetType.STATIC
+	},
+	btn_home: {
+		key: 'btn_home',
+		url: 'img/gui/img_btn_home.png',
+		type: AssetType.STATIC
+	},
 	score_holder: {
 		key: 'score_holder',
 		url: 'img/gui/img_score_holder.png',
 		type: AssetType.STATIC
+	},
+	panel_game_over: {
+		key: 'panel_over',
+		url: 'img/gui/img_panel_over.png',
+		type: AssetType.STATIC
+	},
+	bg_river: {
+		key: 'bg_river',
+		url: 'img/bg/img_bg_river.png',
+		type: AssetType.STATIC
+	},
+	forest_parallax: {
+		key: 'forest_parallax',
+		url: 'img/bg/img_forest_parallax.png',
+		type: AssetType.STATIC
+	},
+
+	// Spritesheet
+	player_idle: {
+		key: 'player_idle',
+		url: 'img/player/spr_player_idle.png',
+		width: 576/6,
+		height: 98,
+		type: AssetType.SPRITESHEET
+	},
+	player_ride: {
+		key: 'player_ride',
+		url: 'img/player/spr_player_ride.png',
+		width: 576/6,
+		height: 98,
+		type: AssetType.SPRITESHEET
 	},
 
 };
