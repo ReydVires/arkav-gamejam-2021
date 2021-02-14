@@ -2,11 +2,6 @@ import { AssetType } from "../info/AssetType";
 
 export const Assets = {
 
-	player_raft: {
-		key: 'player_raft',
-		url: 'img/player/img_player_raft.png',
-		type: AssetType.STATIC
-	},
 	white_effect: {
 		key: 'white_effect',
 		url: 'img/particle/img_white_effect.png',
@@ -54,18 +49,11 @@ export const Assets = {
 	},
 
 	// Spritesheet
-	player_idle: {
-		key: 'player_idle',
-		url: 'img/player/spr_player_idle.png',
-		width: 576/6,
-		height: 98,
-		type: AssetType.SPRITESHEET
-	},
-	player_ride: {
-		key: 'player_ride',
+	player_raft_ride: {
+		key: 'player_raft_ride',
 		url: 'img/player/spr_player_ride.png',
 		width: 576/6,
-		height: 98,
+		height: 96,
 		type: AssetType.SPRITESHEET
 	},
 	obstacle_log: {

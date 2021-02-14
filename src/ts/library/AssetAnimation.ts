@@ -13,6 +13,15 @@ export const Animations = {
 		frameSpeed: 4,
 		loop: true
 	},
+	player_raft_ride: {
+		key: 'player_raft_ride',
+		type: AssetType.ANIMATION,
+		spritesheetRef: AssetsGameplay.player_raft_ride.key,
+		start: 0,
+		end: 5,
+		frameSpeed: 6,
+		loop: true
+	},
 	obstacle_log: {
 		key: 'obstacle_log',
 		type: AssetType.ANIMATION,
