@@ -22,10 +22,6 @@ export class PlayerController {
 		this._view.damaged();
 	}
 
-	position (): Phaser.Math.Vector2 {
-		return this._view.position;
-	}
-
 	update (time: number, dt: number): void {}
 
 	onDamaged (events: OnDamaged): void {

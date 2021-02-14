@@ -1,3 +1,5 @@
+import { CustomTypes } from "../../../../types/custom";
+
 export const enum EventNames {
 	onScoreChange = "onScoreChange",
 }
@@ -8,6 +10,7 @@ export class GameController {
 
 	private _event: Phaser.Events.EventEmitter;
 
+	private _state: CustomTypes.Gameplay.State;
 	private _score: number;
 	private _baseScore: number;
 	private _timer: number;
@@ -21,9 +24,26 @@ export class GameController {
 		this._baseTimer = 500;
 	}
 
+	get state (): CustomTypes.Gameplay.State {
+		return this._state;
+	}
+
 	init (): void {
+		this._state = "TITLE";
 		this._score = 0;
 		this._timer = this._baseTimer;
+	}
+
+	playState (): void {
+		this._state = "GAME";
+	}
+
+	gameOverState (): void {
+		this._state = "GAMEOVER";
+	}
+
+	titleState (): void {
+		this._state = "TITLE";
 	}
 
 	update (time: number, dt: number): void {

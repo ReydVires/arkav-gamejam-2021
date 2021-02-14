@@ -4,6 +4,7 @@ import { ArcadeSprite } from "../../../modules/gameobjects/ArcadeSprite";
 import { ScreenUtilController } from "../../../modules/screenutility/ScreenUtilController";
 
 export const enum EventNames {
+	onCreateFinish = "onCreateFinish",
 	onDamaged = "onDamaged",
 };
 
@@ -23,14 +24,10 @@ export class PlayerView implements BaseView {
 		this.event = new Phaser.Events.EventEmitter();
 	}
 
-	get position (): Phaser.Math.Vector2 {
-		return new Phaser.Math.Vector2(this._sprite.gameObject.x, this._sprite.gameObject.y);
-	}
-
 	create (displayPercentage: number, edges: number[]): void {
 		const { centerX, height } = this.screenUtility;
 		const [left, right, top, bottom] = edges;
-		this._sprite = new ArcadeSprite(this._scene, 0, 0, Assets.player_raft.key, 0);
+		this._sprite = new ArcadeSprite(this._scene, 0, 0, Assets.player_raft.key);
 		this._sprite.transform.setToScaleDisplaySize(displayPercentage);
 		this._sprite.gameObject.setPosition(centerX, top + this._sprite.transform.displayHeight + (height * 0.15));
 	}
