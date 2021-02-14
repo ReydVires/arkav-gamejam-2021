@@ -1,3 +1,6 @@
+import { CustomTypes } from "../../../../types/custom";
+import { AnimationHelper } from "../../../helper/AnimationHelper";
+import { Animations } from "../../../library/AssetAnimation";
 import { Assets } from "../../../library/AssetGameplay";
 import { BaseView } from "../../../modules/core/BaseView";
 import { ArcadeSprite } from "../../../modules/gameobjects/ArcadeSprite";
@@ -8,6 +11,7 @@ export const enum DataProps {
 	displayPercentage = "displayPercentage",
 	backgroundEdges = "backgroundEdges",
 	assetType = "assetType",
+	speedRelative = "speedRelative",
 }
 
 export const enum EventNames {
@@ -21,7 +25,7 @@ export class ObstacleView implements BaseView {
 	screenUtility: ScreenUtilController;
 
 	props = {
-		timeToSpawn: 1000
+		timeToSpawn: 100
 	};
 
 	private _maxTimeToSpawn: number;
@@ -35,7 +39,7 @@ export class ObstacleView implements BaseView {
 	constructor (private _scene: Phaser.Scene) {
 		this.screenUtility = ScreenUtilController.getInstance();
 		this.event = new Phaser.Events.EventEmitter();
-		this._maxTimeToSpawn = 1000;
+		this._maxTimeToSpawn = 800;
 	}
 
 	get obstacles (): Phaser.Physics.Arcade.Group {
@@ -48,10 +52,9 @@ export class ObstacleView implements BaseView {
 
 	private getAssetTypeKey (): string {
 		const assetKeys = [ // TODO: Define with object data property
-			Assets.obs_boulder.key,
-			Assets.obs_plank.key,
-			// Assets.obs_sharp.key,
-			Assets.obs_hold.key,
+			Assets.obstacle_rockes.key,
+			Assets.obstacle_log.key,
+			Assets.obstacle_trashes.key,
 		];
 		const randomPick = Math.floor(Math.random() * assetKeys.length);
 		return assetKeys[randomPick];
@@ -65,7 +68,11 @@ export class ObstacleView implements BaseView {
 			counter: "counter"
 		};
 		switch (assetType) {
-		case Assets.obs_boulder.key:
+		case Assets.obstacle_rockes.key:
+			const animationRockes = Animations.obstacle_rockes as CustomTypes.Asset.AnimationInfoType;
+			AnimationHelper.AddAnimation(this._scene, animationRockes);
+			gameObject.play(animationRockes.key);
+
 			gameObject.on("pointerup", () => {
 				let prevCounter: number = gameObject.getData(dataProps.counter) ?? 0;
 				if (++prevCounter >= 3) {
@@ -77,11 +84,14 @@ export class ObstacleView implements BaseView {
 				gameObject.setData(dataProps.counter, prevCounter);
 			});
 			break;
-		case Assets.obs_plank.key:
+		case Assets.obstacle_log.key:
 			const inputPlugin = this._scene.input;
 			inputPlugin.setDraggable(gameObject);
 			inputPlugin.dragDistanceThreshold = 32 * gameObject.getData(DataProps.displayPercentage);
 			let initGameObjectX = gameObject.x;
+			const animationLog = Animations.obstacle_log as CustomTypes.Asset.AnimationInfoType;
+			AnimationHelper.AddAnimation(this._scene, animationLog);
+			gameObject.play(animationLog.key);
 
 			//gameObject.on("dragstart", () => gameObject.setVelocity(0));
 			gameObject.on("drag", (p: Phaser.Input.Pointer, dragX: number) => {
@@ -124,6 +134,10 @@ export class ObstacleView implements BaseView {
 			});
 			break;
 		default:
+			const animationTrashes = Animations.obstacle_trashes as CustomTypes.Asset.AnimationInfoType;
+			AnimationHelper.AddAnimation(this._scene, animationTrashes);
+			gameObject.play(animationTrashes.key);
+
 			gameObject.once("pointerup", () => {
 				this.playParticle(gameObject);
 				this.deactiveGameObject(gameObject, true);
@@ -134,8 +148,8 @@ export class ObstacleView implements BaseView {
 
 	private spawnObstacle (displayPercentage: number, edges: number[], assetType: string): void {
 		const [leftEdge, rightEdge, topEdge, bottomEdge] = edges;
-		const spawnPosY = bottomEdge;
-		const speedRelative = -230;
+		const spawnPosY = this.screenUtility.height;
+		const SPEED_RELATIVE = -300;
 
 		const obstacle = new ArcadeSprite(this._scene, 0, 0, assetType, 0);
 		this._obstacleGroup.add(obstacle.gameObject);
@@ -144,13 +158,14 @@ export class ObstacleView implements BaseView {
 		obstacle.gameObject.setData(DataProps.assetType, assetType);
 		obstacle.gameObject.setData(DataProps.displayPercentage, displayPercentage);
 		obstacle.gameObject.setData(DataProps.backgroundEdges, edges);
-		obstacle.gameObject.setData(DataProps.deactiveThreshold, topEdge - (obstacle.transform.displayHeight / 2));
+		obstacle.gameObject.setData(DataProps.deactiveThreshold, -obstacle.transform.displayHeight);
+		obstacle.gameObject.setData(DataProps.speedRelative, SPEED_RELATIVE);
 
 		obstacle.gameObject.setPosition(
 			Phaser.Math.Between(leftEdge + (obstacle.transform.displayWidth / 2), rightEdge - (obstacle.transform.displayWidth / 2)),
 			spawnPosY + (obstacle.transform.displayHeight / 2)
 		);
-		obstacle.gameObject.setVelocityY(speedRelative * displayPercentage);
+		obstacle.gameObject.setVelocityY(SPEED_RELATIVE * displayPercentage);
 
 		this.setInteractive(obstacle.gameObject);
 	}
@@ -164,8 +179,7 @@ export class ObstacleView implements BaseView {
 			Phaser.Math.Between(left + (gameObject.displayWidth / 2), right - (gameObject.displayWidth / 2)),
 			bottom + (gameObject.displayHeight / 2)
 		);
-
-		const speedRelative = -280;
+		const speedRelative = gameObject.getData(DataProps.speedRelative) as number;
 		const displayPercentage = gameObject.getData(DataProps.displayPercentage) as number;
 		gameObject.setVelocityY(speedRelative * displayPercentage);
 
