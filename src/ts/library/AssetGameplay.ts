@@ -2,26 +2,6 @@ import { AssetType } from "../info/AssetType";
 
 export const Assets = {
 
-	player_raft: {
-		key: 'player_raft',
-		url: 'img/player/img_player_raft.png',
-		type: AssetType.STATIC
-	},
-	obs_boulder: {
-		key: 'obs_boulder',
-		url: 'img/obstacles/img_obs_boulder.png',
-		type: AssetType.STATIC
-	},
-	obs_plank: {
-		key: 'obs_plank',
-		url: 'img/obstacles/img_obs_plank.png',
-		type: AssetType.STATIC
-	},
-	obs_sharp: {
-		key: 'obs_sharp',
-		url: 'img/obstacles/img_obs_sharp.png',
-		type: AssetType.STATIC
-	},
 	white_effect: {
 		key: 'white_effect',
 		url: 'img/particle/img_white_effect.png',
@@ -69,18 +49,32 @@ export const Assets = {
 	},
 
 	// Spritesheet
-	player_idle: {
-		key: 'player_idle',
-		url: 'img/player/spr_player_idle.png',
-		width: 576/6,
-		height: 98,
-		type: AssetType.SPRITESHEET
-	},
-	player_ride: {
-		key: 'player_ride',
+	player_raft_ride: {
+		key: 'player_raft_ride',
 		url: 'img/player/spr_player_ride.png',
 		width: 576/6,
-		height: 98,
+		height: 96,
+		type: AssetType.SPRITESHEET
+	},
+	obstacle_log: {
+		key: 'obstacle_log',
+		url: 'img/obstacles/spr_obstacle_log.png',
+		width: 2304/6,
+		height: 72,
+		type: AssetType.SPRITESHEET
+	},
+	obstacle_rockes: {
+		key: 'obstacle_rockes',
+		url: 'img/obstacles/spr_obstacle_rockes.png',
+		width: 640/5,
+		height: 128,
+		type: AssetType.SPRITESHEET
+	},
+	obstacle_trashes: {
+		key: 'obstacle_trashes',
+		url: 'img/obstacles/spr_obstacle_trashes.png',
+		width: 2250/5,
+		height: 192,
 		type: AssetType.SPRITESHEET
 	},
 
