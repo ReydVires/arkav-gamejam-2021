@@ -54,6 +54,10 @@ export declare namespace CustomTypes {
 
     }
 
-    namespace Gameplay {}
+    namespace Gameplay {
+
+        type State = "GAME" | "TITLE" | "GAMEOVER"
+
+    }
 
 }
