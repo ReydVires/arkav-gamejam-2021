@@ -69,6 +69,12 @@ export class GameplaySceneController extends Phaser.Scene {
 			});
 		});
 
+		this.obstacleController.onDestroy((type) => {
+			this.audioController.playSFX("sfx_destroy_" + type, {
+				volume: 1.5
+			});
+		});
+
 		this.onClickStart(() => {
 			this.view.hideTitleScreen();
 			this.gameController.playState();
@@ -77,6 +83,7 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.onClickRestart(() => this.scene.start(SceneInfo.TITLE.key));
 
 		this.onCreateFinish(() => {
+			this.playBGMWhenReady();
 			this.debugController.show(true);
 		});
 	}
@@ -85,6 +92,17 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.view.create(
 			this.bgController.displayPercentage()
 		);
+	}
+
+	playBGMWhenReady (): void {
+		if (!this.sound.locked) {
+			this.audioController.playBGM(Audios.bgm_title.key, false);
+			return;
+		}
+		// This will wait for 'unlocked' to fire and then play
+		this.sound.once(Phaser.Sound.Events.UNLOCKED, () => {
+			this.audioController.playBGM(Audios.bgm_title.key);
+		});
 	}
 
 	update (time: number, dt: number): void {
