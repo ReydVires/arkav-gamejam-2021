@@ -31,7 +31,7 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.toast.configure(this);
 		this.view = new GameplaySceneView(this);
 		this.audioController = AudioController.getInstance();
-		// this.cameraController = new CameraController(this);
+		// this.cameraController = new CameraController(this); // FIXME: For title screen mode
 		this.debugController = new DebugController(this);
 		this.gameController = new GameController();
 		this.bgController = new BackgroundController(this);
