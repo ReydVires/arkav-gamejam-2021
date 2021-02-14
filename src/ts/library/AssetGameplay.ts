@@ -22,6 +22,11 @@ export const Assets = {
 		url: 'img/obstacles/img_obs_sharp.png',
 		type: AssetType.STATIC
 	},
+	obs_hold: {
+		key: 'obs_hold',
+		url: 'img/obstacles/img_obs_boulder.png',
+		type: AssetType.STATIC
+	},
 	white_effect: {
 		key: 'white_effect',
 		url: 'img/particle/img_white_effect.png',

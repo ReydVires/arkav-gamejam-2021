@@ -59,7 +59,7 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.obstacleController.obstacles(),
 			(player, obstacle) => {
 				this.playerController.damaged();
-				this.obstacleController.deactiveObstacle(obstacle);
+				this.obstacleController.deactiveObstacle(obstacle, false);
 			}
 		);
 
@@ -111,6 +111,11 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.bgController.update(time, dt);
 		this.playerController.update(time, dt);
 		this.obstacleController.update(time, dt);
+
+		if(this.obstacleController.getDeactivatedBonus()){
+			this.playerController.healthBonus();
+			this.obstacleController.setDeactivatedBonus(false);
+		}
 	}
 
 	onPlaySFXClick (event: Function): void {

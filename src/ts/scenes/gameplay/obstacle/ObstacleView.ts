@@ -2,6 +2,7 @@ import { Assets } from "../../../library/AssetGameplay";
 import { BaseView } from "../../../modules/core/BaseView";
 import { ArcadeSprite } from "../../../modules/gameobjects/ArcadeSprite";
 import { ScreenUtilController } from "../../../modules/screenutility/ScreenUtilController";
+import { debug } from "webpack";
 
 export const enum DataProps {
 	deactiveThreshold = "deactiveThreshold",
@@ -27,6 +28,10 @@ export class ObstacleView implements BaseView {
 	private _maxTimeToSpawn: number;
 	private _obstacleGroup: Phaser.Physics.Arcade.Group;
 	private _emitter: Phaser.GameObjects.Particles.ParticleEmitter;
+	public obsHoldCondition: boolean = false;
+	public obsHoldCounter: number;
+	private _deactivatedStreak: string[] = [];
+	public deactivatedBonus: boolean;
 
 	constructor (private _scene: Phaser.Scene) {
 		this.screenUtility = ScreenUtilController.getInstance();
@@ -46,7 +51,8 @@ export class ObstacleView implements BaseView {
 		const assetKeys = [ // TODO: Define with object data property
 			Assets.obs_boulder.key,
 			Assets.obs_plank.key,
-			Assets.obs_sharp.key,
+			// Assets.obs_sharp.key,
+			Assets.obs_hold.key,
 		];
 		const randomPick = Math.floor(Math.random() * assetKeys.length);
 		return assetKeys[randomPick];
@@ -63,10 +69,10 @@ export class ObstacleView implements BaseView {
 		case Assets.obs_boulder.key:
 			gameObject.on("pointerup", () => {
 				let prevCounter: number = gameObject.getData(dataProps.counter) ?? 0;
-				if (++prevCounter >= 2) {
+				if (++prevCounter >= 3) {
 					gameObject.setData(dataProps.counter, 0);
 					this.playParticle(gameObject);
-					this.deactiveGameObject(gameObject);
+					this.deactiveGameObject(gameObject, true);
 					return;
 				}
 				gameObject.setData(dataProps.counter, prevCounter);
@@ -76,28 +82,52 @@ export class ObstacleView implements BaseView {
 			const inputPlugin = this._scene.input;
 			inputPlugin.setDraggable(gameObject);
 			inputPlugin.dragDistanceThreshold = 32 * gameObject.getData(DataProps.displayPercentage);
+			let initGameObjectX = gameObject.x;
 
-			gameObject.on("dragstart", () => gameObject.setVelocity(0));
+			//gameObject.on("dragstart", () => gameObject.setVelocity(0));
 			gameObject.on("drag", (p: Phaser.Input.Pointer, dragX: number) => {
-				gameObject.x = dragX;
+				let direction = initGameObjectX - dragX;
+				// if(direction >= 0){
+					gameObject.x -= direction/210;
+					// kalau pakai dragX angkanya jadi kekecilan, jadinya lambat banget gerak
+					// console.log('ke kiriii');
+				// } else {
+					// gameObject.x -= direction/210;
+					// gak tahu kenapa minus juga
+					// console.log('ke kanann');
+				// }
+				// i don't know what i'm doing but it works!
 			});
 			gameObject.on("dragend", () => {
-				gameObject.disableInteractive();
+				// gameObject.disableInteractive();
 				this._scene.tweens.add({
 					targets: gameObject,
-					alpha: 0,
+					alpha: 1,
 					duration: 100,
-					onComplete: () => {
-						this.deactiveGameObject(gameObject);
-						gameObject.setAlpha(1);
+					// onComplete: () => {
+					// 	this.deactiveGameObject(gameObject);
+					// 	gameObject.setAlpha(1);
+					// }
+				});
+			});
+			break;
+		case Assets.obs_hold.key:
+			gameObject.on("pointerdown", () => {
+				this.obsHoldCondition = true;
+				gameObject.on("pointerup", () => {
+					if(this.obsHoldCounter >= 50){
+						this.deactiveGameObject(gameObject, true);
+						console.log('Game Object deactivated');
 					}
+					this.obsHoldCondition = false;
+					this.obsHoldCounter = 0;
 				});
 			});
 			break;
 		default:
 			gameObject.once("pointerup", () => {
 				this.playParticle(gameObject);
-				this.deactiveGameObject(gameObject);
+				this.deactiveGameObject(gameObject, true);
 			});
 			break;
 		}
@@ -136,7 +166,7 @@ export class ObstacleView implements BaseView {
 			bottom + (gameObject.displayHeight / 2)
 		);
 
-		const speedRelative = -230;
+		const speedRelative = -280;
 		const displayPercentage = gameObject.getData(DataProps.displayPercentage) as number;
 		gameObject.setVelocityY(speedRelative * displayPercentage);
 
@@ -170,7 +200,28 @@ export class ObstacleView implements BaseView {
 		this._emitter.explode(count, x, y);
 	}
 
-	deactiveGameObject (gameObject: Phaser.Physics.Arcade.Sprite): void {
+	deactiveGameObject (gameObject: Phaser.Physics.Arcade.Sprite, playerDo: boolean): void {
+		if(!this._deactivatedStreak.length){
+			this._deactivatedStreak.push(gameObject.texture.key);
+			console.log('demi bonus', gameObject.texture.key, 'first');
+		} else {
+			if(playerDo){
+				if(this._deactivatedStreak[0] == gameObject.texture.key) {
+					this._deactivatedStreak.push(gameObject.texture.key);
+					console.log('demi bonus', gameObject.texture.key, 'it is the same!', this._deactivatedStreak.length);
+
+					if(this._deactivatedStreak.length >= 4){
+						this.deactivatedBonus = true;
+						this._deactivatedStreak.length = 0;
+						console.log('demi bonus', 'berhasil dapet 4x')
+					}
+				} else {
+					this._deactivatedStreak.length = 0;
+					console.log('demi bonus', gameObject.texture.key, 'it is different');
+				}
+			}
+		}
+		
 		gameObject.setVelocity(0).disableBody(true, true);
 		gameObject.removeAllListeners();
 		gameObject.setActive(false);
