@@ -1,6 +1,6 @@
 {
   "name": "arkav-gamejam-2021",
-  "version": "0.0.1",
+  "version": "0.6.5",
   "description": "Webpack + Typescript for Phaser 3",
   "main": "src/index.js",
   "author": "ReydVires",
