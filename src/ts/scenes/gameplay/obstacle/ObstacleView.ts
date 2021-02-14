@@ -2,7 +2,6 @@ import { Assets } from "../../../library/AssetGameplay";
 import { BaseView } from "../../../modules/core/BaseView";
 import { ArcadeSprite } from "../../../modules/gameobjects/ArcadeSprite";
 import { ScreenUtilController } from "../../../modules/screenutility/ScreenUtilController";
-import { debug } from "webpack";
 
 export const enum DataProps {
 	deactiveThreshold = "deactiveThreshold",
