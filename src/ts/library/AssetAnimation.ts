@@ -13,13 +13,31 @@ export const Animations = {
 		frameSpeed: 4,
 		loop: true
 	},
-	player_idle: {
-		key: 'player_idle',
+	obstacle_log: {
+		key: 'obstacle_log',
 		type: AssetType.ANIMATION,
-		spritesheetRef: AssetsGameplay.player_idle.key,
+		spritesheetRef: AssetsGameplay.obstacle_log.key,
 		start: 0,
 		end: 5,
-		frameSpeed: 4,
+		frameSpeed: 6,
+		loop: true
+	},
+	obstacle_rockes: {
+		key: 'obstacle_rockes',
+		type: AssetType.ANIMATION,
+		spritesheetRef: AssetsGameplay.obstacle_rockes.key,
+		start: 0,
+		end: 4,
+		frameSpeed: 6,
+		loop: true
+	},
+	obstacle_trashes: {
+		key: 'obstacle_trashes',
+		type: AssetType.ANIMATION,
+		spritesheetRef: AssetsGameplay.obstacle_trashes.key,
+		start: 0,
+		end: 4,
+		frameSpeed: 6,
 		loop: true
 	},
 
