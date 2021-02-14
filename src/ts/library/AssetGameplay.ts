@@ -27,5 +27,25 @@ export const Assets = {
 		url: 'img/particle/img_white_effect.png',
 		type: AssetType.STATIC
 	},
+	btn_exit: {
+		key: 'btn_exit',
+		url: 'img/gui/img_btn_exit.png',
+		type: AssetType.STATIC
+	},
+	btn_start: {
+		key: 'btn_start',
+		url: 'img/gui/img_btn_start.png',
+		type: AssetType.STATIC
+	},
+	btn_pause: {
+		key: 'btn_pause',
+		url: 'img/gui/img_btn_pause.png',
+		type: AssetType.STATIC
+	},
+	score_holder: {
+		key: 'score_holder',
+		url: 'img/gui/img_score_holder.png',
+		type: AssetType.STATIC
+	},
 
 };

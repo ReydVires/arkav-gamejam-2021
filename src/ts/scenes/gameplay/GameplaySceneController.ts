@@ -8,6 +8,7 @@ import { SceneInfo } from "../../info/SceneInfo";
 import { PlayerController } from "./player/PlayerController";
 import { BackgroundController } from "./background/BackgroundController";
 import { ObstacleController } from "./obstacle/ObstacleController";
+import { GameController } from "./game/GameController";
 
 type OnCreateFinish = (...args: unknown[]) => void;
 
@@ -15,8 +16,9 @@ export class GameplaySceneController extends Phaser.Scene {
 
 	view: GameplaySceneView;
 	audioController: AudioController;
-	cameraController: CameraController;
+	// cameraController: CameraController;
 	debugController: DebugController;
+	gameController: GameController;
 	bgController: BackgroundController;
 	playerController: PlayerController;
 	obstacleController: ObstacleController;
@@ -29,14 +31,16 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.toast.configure(this);
 		this.view = new GameplaySceneView(this);
 		this.audioController = AudioController.getInstance();
-		this.cameraController = new CameraController(this);
+		// this.cameraController = new CameraController(this); // FIXME: For title screen mode
 		this.debugController = new DebugController(this);
+		this.gameController = new GameController();
 		this.bgController = new BackgroundController(this);
 		this.playerController = new PlayerController(this);
 		this.obstacleController = new ObstacleController(this);
 
-		this.cameraController.init();
+		// this.cameraController.init();
 		this.debugController.init();
+		this.gameController.init();
 		this.bgController.init();
 		this.playerController.init(
 			this.bgController.displayPercentage(),
@@ -46,6 +50,10 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.bgController.displayPercentage(),
 			this.bgController.getEdge()
 		);
+
+		this.gameController.onScoreChange((score) => {
+			this.view.setScore(score);
+		});
 
 		this.playerController.registerOverlap(
 			this.obstacleController.obstacles(),
@@ -58,6 +66,7 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.playerController.onDamaged((life) => {
 			this.toast.show((life > 0) ? `Player damaged. ${life} chance left!` : `Game over!`);
 			if (life) return;
+
 			this.input.enabled = false;
 			this.time.delayedCall(1500, () => this.scene.start(SceneInfo.TITLE.key));
 		});
@@ -65,20 +74,40 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.onPlaySFXClick(() => this.audioController.playSFX(Audios.sfx_click.key));
 		this.onClickRestart(() => this.scene.start(SceneInfo.TITLE.key));
 		this.onCreateFinish((uiView: Phaser.GameObjects.Container) => {
-			this.cameraController.registerGameobjectInCamera(uiView, CameraKeyList.UI);
+			// this.cameraController.registerGameobjectInCamera(uiView, CameraKeyList.UI);
 			this.debugController.show(true);
 		});
 	}
 
 	create (): void {
-		this.view.create();
+		this.view.create(
+			this.bgController.displayPercentage()
+		);
+	}
+
+	private zoomInCamera (): void {
+		const { x, y } = this.playerController.position();
+		const cam = this.cameras.main;
+		cam.pan(x, y, 675, "Linear");
+		cam.zoomTo(4, 700);
+	}
+
+	private zoomOutCamera (): void {
+		const cam = this.cameras.main;
+		cam.pan(cam.centerX, cam.centerY, 1000, "Power2");
+		cam.zoomTo(1, 750);
 	}
 
 	update (time: number, dt: number): void {
 		if (this.view.restartKey.isDown) {
 			this.view.event.emit(EventNames.onClickRestart);
 		}
-		this.cameraController.update(time, dt);
+		if (Phaser.Input.Keyboard.JustDown(this.view.debugKey)) {
+			const cam = this.cameras.main;
+			(cam.zoom !== 1) ? this.zoomOutCamera() : this.zoomInCamera();
+		}
+		// this.cameraController.update(time, dt);
+		this.gameController.update(time, dt);
 		this.bgController.update(time, dt);
 		this.playerController.update(time, dt);
 		this.obstacleController.update(time, dt);

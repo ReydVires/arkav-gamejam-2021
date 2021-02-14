@@ -13,7 +13,7 @@ export class PlayerView implements BaseView {
 	screenUtility: ScreenUtilController;
 
 	props = {
-		life: 2,
+		life: 1,
 	};
 
 	private _sprite: ArcadeSprite;
@@ -21,6 +21,10 @@ export class PlayerView implements BaseView {
 	constructor (private _scene: Phaser.Scene) {
 		this.screenUtility = ScreenUtilController.getInstance();
 		this.event = new Phaser.Events.EventEmitter();
+	}
+
+	get position (): Phaser.Math.Vector2 {
+		return new Phaser.Math.Vector2(this._sprite.gameObject.x, this._sprite.gameObject.y);
 	}
 
 	create (displayPercentage: number, edges: number[]): void {

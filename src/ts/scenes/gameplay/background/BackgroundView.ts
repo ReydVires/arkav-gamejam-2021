@@ -29,7 +29,8 @@ export class BackgroundView implements BaseView {
 
 	create (): void {
 		const { centerX, centerY, width, height } = this.screenUtility;
-		this._sprite = new Rectangle(this._scene, centerX, centerY, 1080, 1920, 0xb2bec3, 1);
+		const color = 0x74b9ff;
+		this._sprite = new Rectangle(this._scene, centerX, centerY, 1080, 1920, color, 1);
 		this._sprite.transform.setMaxPreferredDisplaySize(width, height);
 	}
 
