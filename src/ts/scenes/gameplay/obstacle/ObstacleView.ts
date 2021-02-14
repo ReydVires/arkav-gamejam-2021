@@ -12,6 +12,7 @@ export const enum DataProps {
 
 export const enum EventNames {
 	onSpawn = "onSpawn",
+	onTap = "onTap",
 };
 
 export class ObstacleView implements BaseView {
