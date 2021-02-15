@@ -69,10 +69,9 @@ export class GameplaySceneController extends Phaser.Scene {
 			});
 		});
 
-		this.obstacleController.onDestroy((type) => {
-			this.audioController.playSFX("sfx_destroy_" + type, {
-				volume: 1.5
-			});
+		this.obstacleController.onPlaySFX((type) => {
+			const prefixSFX = "sfx_destroy_";
+			this.audioController.playSFX(prefixSFX + type, { volume: 1.5 });
 		});
 
 		this.onClickStart(() => {
