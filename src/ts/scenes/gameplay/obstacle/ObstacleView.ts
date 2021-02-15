@@ -73,7 +73,8 @@ export class ObstacleView implements BaseView {
 
 			gameObject.on("pointerup", () => {
 				let prevCounter: number = gameObject.getData(dataProps.counter) ?? 0;
-				if (++prevCounter >= 2) {
+				const tapToDestroy = 2;
+				if (++prevCounter >= tapToDestroy) {
 					gameObject.setData(dataProps.counter, 0);
 					this.playParticle(gameObject);
 					this.deactiveGameObject(gameObject);
