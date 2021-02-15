@@ -54,7 +54,7 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.obstacleController.obstacles(),
 			(player, obstacle) => {
 				this.playerController.damaged();
-				this.obstacleController.deactiveObstacle(obstacle);
+				this.obstacleController.deactiveObstacle(obstacle, false);
 			}
 		);
 
@@ -62,10 +62,16 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.toast.show((life > 0) ? `Player damaged. ${life} chance left!` : `Game over!`);
 			if (life) return;
 
-			this.input.enabled = false;
+			// console.log('boom');
+			// this.input.enabled = false;
+			// this.scene.pause();
 			this.time.delayedCall(1500, () => {
 				this.gameController.gameOverState();
-				this.scene.restart(); // FIXME
+				// console.log('boom 2', this.gameController.state);
+				if(this.gameController.state == 'GAMEOVER') {
+					// console.log('boom 3');
+					this.view.createGameOverScreen();
+				}
 			});
 		});
 
@@ -117,6 +123,15 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.bgController.update(time, dt);
 		this.playerController.update(time, dt);
 		if (this.gameController.state === "GAME") this.obstacleController.update(time, dt);
+    
+		if(this.obstacleController.getDeactivatedBonus()){
+			this.playerController.healthBonus();
+			this.obstacleController.setDeactivatedBonus(false);
+		}
+		
+		if(this.view.getRestart()) {
+			this.input.on('pointerdown', () => this.scene.restart());
+		}
 	}
 
 	onPlaySFXClick (event: Function): void {

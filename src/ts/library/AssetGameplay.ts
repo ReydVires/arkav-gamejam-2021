@@ -1,7 +1,6 @@
 import { AssetType } from "../info/AssetType";
 
 export const Assets = {
-
 	white_effect: {
 		key: 'white_effect',
 		url: 'img/particle/img_white_effect.png',
@@ -66,6 +65,9 @@ export const Assets = {
 		url: 'img/obstacles/spr_obstacle_log.png',
 		width: 2304/6,
 		height: 72,
+		// width: 2304/6,
+		// height: 72,
+		// changes it to become bigger
 		type: AssetType.SPRITESHEET
 	},
 	obstacle_rockes: {
@@ -73,6 +75,9 @@ export const Assets = {
 		url: 'img/obstacles/spr_obstacle_rockes.png',
 		width: 640/5,
 		height: 128,
+		// width: 640/5,
+		// height: 128,
+		// changes it to become bigger
 		type: AssetType.SPRITESHEET
 	},
 	obstacle_trashes: {
