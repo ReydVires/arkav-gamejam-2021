@@ -2,10 +2,8 @@ import { BaseView } from "../../modules/core/BaseView";
 import { ScreenUtilController } from "../../modules/screenutility/ScreenUtilController";
 import { Text } from "../../modules/gameobjects/Text";
 import { Assets } from "../../library/AssetLoading";
-import { AnimationHelper } from "../../helper/AnimationHelper";
-import { Animations } from "../../library/AssetAnimation";
 import { Sprite } from "../../modules/gameobjects/Sprite";
-import { CustomTypes } from "../../../types/custom";
+import { FontAsset } from "../../library/AssetFont";
 
 export class LoadingSceneView implements BaseView {
 
@@ -32,19 +30,11 @@ export class LoadingSceneView implements BaseView {
 
 	private createLoadingComponents (): void {
 		const { centerX, centerY, screenPercentage } = this.screenUtility;
-		const frame = new Sprite(this._scene, centerX, centerY, Assets.loading_frame.key);
+		const frame = new Sprite(this._scene, centerX, centerY * 1.65, Assets.loading_frame.key);
 		frame.transform.setToScaleDisplaySize(screenPercentage);
 		frame.gameObject.setOrigin(0.5)
 			.setDepth(1)
 			.setAlpha(1);
-
-		const loadingTextPos = frame.transform.getDisplayPositionFromCoordinate(0.5, 0);
-		const loadingTextAnim = new Sprite(this._scene, 0, 0, Assets.loading_text.key);
-		loadingTextAnim.transform.setToScaleDisplaySize(frame.transform.displayToOriginalWidthRatio);
-		loadingTextAnim.gameObject.setOrigin(0.5, 1).setPosition(loadingTextPos.x, loadingTextPos.y);
-
-		AnimationHelper.AddAnimation(this._scene, Animations.loading_text as CustomTypes.Asset.AnimationInfoType);
-		loadingTextAnim.gameObject.play(Animations.loading_text.key);
 
 		const offsetFrameY = 12.25 * frame.transform.displayToOriginalHeightRatio;
 		this._bar = new Sprite(this._scene, frame.gameObject.x, frame.gameObject.y - offsetFrameY, Assets.loading_bar.key);
@@ -53,8 +43,9 @@ export class LoadingSceneView implements BaseView {
 			.setDepth(2)
 			.setAlpha(1);
 
-		this._progressText = new Text(this._scene, frame.gameObject.x, frame.gameObject.getBottomCenter().y + (16 * frame.transform.displayToOriginalHeightRatio), '0%', {
-			color: '#ffd561',
+		this._progressText = new Text(this._scene, frame.gameObject.x, frame.gameObject.getBottomCenter().y + (8 * frame.transform.displayToOriginalHeightRatio), '0%', {
+			fontFamily: FontAsset.potta.key,
+			color: '#fafafa',
 			fontStyle: 'bold',
 			align: 'center'
 		});

@@ -4,15 +4,6 @@ import { AssetType } from "../info/AssetType";
 
 export const Animations = {
 
-	loading_text: {
-		key: 'loading_text',
-		type: AssetType.ANIMATION,
-		spritesheetRef: AssetsLoading.loading_text.key,
-		start: 0,
-		end: 3,
-		frameSpeed: 4,
-		loop: true
-	},
 	player_raft_ride: {
 		key: 'player_raft_ride',
 		type: AssetType.ANIMATION,
