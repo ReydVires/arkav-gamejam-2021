@@ -80,7 +80,7 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.gameController.playState();
 		});
 		this.onPlaySFXClick(() => this.audioController.playSFX(Audios.sfx_click.key));
-		this.onClickRestart(() => this.scene.start(SceneInfo.TITLE.key));
+		this.onClickRestart(() => this.scene.restart());
 
 		this.onCreateFinish(() => {
 			this.playBGMWhenReady();
@@ -106,11 +106,8 @@ export class GameplaySceneController extends Phaser.Scene {
 	}
 
 	update (time: number, dt: number): void {
-		if (this.view.restartKey.isDown) {
+		if (Phaser.Input.Keyboard.JustUp(this.view.restartKey)) {
 			this.view.event.emit(EventNames.onClickRestart);
-		}
-		if (Phaser.Input.Keyboard.JustDown(this.view.debugKey)) {
-			// pass
 		}
 
 		if (this.gameController.state === "GAME") this.gameController.update(time, dt);

@@ -4,7 +4,6 @@ import { Assets as LoadingAsset } from "../../library/AssetLoading";
 import { Assets as OrientationAsset } from "../../library/AssetOrientation";
 import { Assets as ErrorAsset } from "../../library/AssetError";
 import { Assets as GameplayAsset } from "../../library/AssetGameplay";
-import { Assets as TitleAsset } from "../../library/AssetTitle";
 import { Audios as AudioAsset } from "../../library/AssetAudio";
 import { CustomTypes } from "../../../types/custom";
 import { SceneInfo } from "../../info/SceneInfo";
@@ -51,7 +50,6 @@ export class LoadingSceneController extends Phaser.Scene {
 		LoaderHelper.LoadAssets(this, ErrorAsset as CustomTypes.Asset.ObjectAsset);
 		LoaderHelper.LoadAssets(this, GameplayAsset as CustomTypes.Asset.ObjectAsset);
 		LoaderHelper.LoadAssets(this, AudioAsset as CustomTypes.Asset.ObjectAsset);
-		LoaderHelper.LoadAssets(this, TitleAsset as CustomTypes.Asset.ObjectAsset);
 
 		this.load.start(); // Execute: onCompleteLoad
 	}

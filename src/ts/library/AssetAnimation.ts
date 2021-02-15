@@ -1,4 +1,3 @@
-import { Assets as AssetsLoading } from "./AssetLoading";
 import { Assets as AssetsGameplay } from "./AssetGameplay";
 import { AssetType } from "../info/AssetType";
 
