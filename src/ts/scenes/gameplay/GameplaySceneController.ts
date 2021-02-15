@@ -7,6 +7,7 @@ import { PlayerController } from "./player/PlayerController";
 import { BackgroundController } from "./background/BackgroundController";
 import { ObstacleController } from "./obstacle/ObstacleController";
 import { GameController } from "./game/GameController";
+import { CONFIG } from "../../info/GameInfo";
 
 type OnCreateFinish = (...args: unknown[]) => void;
 
@@ -59,11 +60,12 @@ export class GameplaySceneController extends Phaser.Scene {
 		);
 
 		this.playerController.onDamaged((life) => {
-			this.toast.show((life > 0) ? `Player damaged. ${life} chance left!` : `Game over!`);
+			(CONFIG.ON_DEBUG) && this.toast.show((life > 0) ? `Player damaged. ${life} chance left!` : `Game over!`);
 			if (life) return;
 
+			this.audioController.playSFX(Audios.sfx_lose.key, { volume: 0.9, rate: 1.15 });
 			this.input.enabled = false;
-			this.time.delayedCall(1500, () => {
+			this.time.delayedCall(1650, () => {
 				this.gameController.gameOverState();
 				this.scene.restart(); // FIXME
 			});
