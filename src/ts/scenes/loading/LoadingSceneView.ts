@@ -23,9 +23,13 @@ export class LoadingSceneView implements BaseView {
 	}
 
 	private createBackground (): void {
-		const { centerX, centerY, width, height } = this.screenUtility;
+		const { centerX, centerY, width, height, screenPercentage } = this.screenUtility;
 		const bg = new Sprite(this._scene, centerX, centerY, Assets.loading_bg.key);
 		bg.transform.setMinPreferredDisplaySize(width, height);
+
+		const logo = new Sprite(this._scene, centerX, height * 0.15, Assets.logo.key);
+		logo.transform.setToScaleDisplaySize(bg.transform.displayToOriginalHeightRatio * 1.15);
+		logo.gameObject.y += (logo.transform.displayHeight / 4) * screenPercentage;
 	}
 
 	private createLoadingComponents (): void {
