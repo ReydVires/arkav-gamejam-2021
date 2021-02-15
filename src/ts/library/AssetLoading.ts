@@ -17,5 +17,10 @@ export const Assets = {
 		url: 'img/loading/img_loading_frame.png',
 		type: AssetType.STATIC
 	},
+	logo: {
+		key: 'logo',
+		url: 'img/loading/img_logo.png',
+		type: AssetType.STATIC
+	},
 
 };
