@@ -6,6 +6,8 @@ import { BaseView } from "../../../modules/core/BaseView";
 import { ArcadeSprite } from "../../../modules/gameobjects/ArcadeSprite";
 import { ScreenUtilController } from "../../../modules/screenutility/ScreenUtilController";
 
+const PLAYER_LAYER = 20;
+
 export const enum EventNames {
 	onCreateFinish = "onCreateFinish",
 	onDamaged = "onDamaged",
@@ -33,6 +35,7 @@ export class PlayerView implements BaseView {
 		this._sprite = new ArcadeSprite(this._scene, 0, 0, Assets.player_raft_ride.key);
 		this._sprite.transform.setToScaleDisplaySize(displayPercentage * 2);
 		this._sprite.gameObject.setPosition(centerX, top + this._sprite.transform.displayHeight + (height * 0.175));
+		this._sprite.gameObject.setDepth(PLAYER_LAYER);
 
 		const animInfoType = Animations.player_raft_ride as CustomTypes.Asset.AnimationInfoType;
 		AnimationHelper.AddAnimation(this._scene, animInfoType);
@@ -40,8 +43,8 @@ export class PlayerView implements BaseView {
 	}
 
 	damaged (): void {
-		this._sprite.gameObject.disableBody(true, false);
 		this.props.life--;
+		this._sprite.gameObject.disableBody(true, false);
 
 		const tweenProps = <Phaser.Types.Tweens.TweenPropConfig> {
 			alpha: { getStart: () => 1, getEnd: () => 0.35 },
