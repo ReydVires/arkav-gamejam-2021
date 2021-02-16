@@ -44,7 +44,8 @@ export class PlayerView implements BaseView {
 
 	damaged (): void {
 		this.props.life--;
-		this._sprite.gameObject.disableBody(true, false);
+		this._sprite.gameObject.disableBody(true);
+		this._sprite.gameObject.setActive(true);
 
 		const tweenProps = <Phaser.Types.Tweens.TweenPropConfig> {
 			alpha: { getStart: () => 1, getEnd: () => 0.35 },
@@ -52,9 +53,9 @@ export class PlayerView implements BaseView {
 		const tweenEffect = this._scene.tweens.create({
 			targets: this._sprite.gameObject,
 			props: tweenProps,
-			duration: 75,
+			duration: 60,
 			yoyo: true,
-			repeat: 2,
+			repeat: 3,
 			completeDelay: 100,
 			onComplete: () => {
 				if (this.props.life <= 0) return;
