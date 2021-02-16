@@ -1,4 +1,4 @@
-import { CustomTypes } from "../../../../types/custom";
+import { GameState } from "../../../info/GameInfo";
 
 export const enum EventNames {
 	onScoreChange = "onScoreChange",
@@ -10,40 +10,36 @@ export class GameController {
 
 	private _event: Phaser.Events.EventEmitter;
 
-	private _state: CustomTypes.Gameplay.State;
+	private _state: GameState;
 	private _score: number;
 	private _baseScore: number;
 	private _timer: number;
-	private _baseTimer: number;
+	private _baseTimerScore: number;
 
 	constructor () {
 		this._event = new Phaser.Events.EventEmitter();
 
 		// Should be references from gamedata
 		this._baseScore = 5;
-		this._baseTimer = 500;
+		this._baseTimerScore = 500;
 	}
 
-	get state (): CustomTypes.Gameplay.State {
+	get state (): GameState {
 		return this._state;
 	}
 
 	init (): void {
-		this._state = "TITLE";
+		this._state = GameState.TITLE;
 		this._score = 0;
-		this._timer = this._baseTimer;
+		this._timer = this._baseTimerScore;
 	}
 
 	playState (): void {
-		this._state = "GAME";
+		this._state = GameState.PLAYING;
 	}
 
 	gameOverState (): void {
-		this._state = "GAMEOVER";
-	}
-
-	titleState (): void {
-		this._state = "TITLE";
+		this._state = GameState.GAMEOVER;
 	}
 
 	update (time: number, dt: number): void {
@@ -51,7 +47,7 @@ export class GameController {
 		if (this._timer <= 0) {
 			this._score += this._baseScore;
 			this._event.emit(EventNames.onScoreChange, this._score);
-			this._timer += this._baseTimer;
+			this._timer += this._baseTimerScore;
 		}
 	}
 

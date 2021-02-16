@@ -7,7 +7,7 @@ import { PlayerController } from "./player/PlayerController";
 import { BackgroundController } from "./background/BackgroundController";
 import { ObstacleController } from "./obstacle/ObstacleController";
 import { GameController } from "./game/GameController";
-import { CONFIG } from "../../info/GameInfo";
+import { CONFIG, GameState } from "../../info/GameInfo";
 
 type OnCreateFinish = (...args: unknown[]) => void;
 
@@ -111,10 +111,10 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.view.event.emit(EventNames.onClickRestart);
 		}
 
-		if (this.gameController.state === "GAME") this.gameController.update(time, dt);
+		if (this.gameController.state === GameState.PLAYING) this.gameController.update(time, dt);
 		this.bgController.update(time, dt);
 		this.playerController.update(time, dt);
-		if (this.gameController.state === "GAME") this.obstacleController.update(time, dt);
+		if (this.gameController.state === GameState.PLAYING) this.obstacleController.update(time, dt);
 	}
 
 	onPlaySFXClick (event: Function): void {
