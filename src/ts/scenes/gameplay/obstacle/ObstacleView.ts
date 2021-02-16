@@ -32,6 +32,7 @@ export class ObstacleView implements BaseView {
 	private _backgroundEdges: number[];
 	private _obstacleGroup: Phaser.Physics.Arcade.Group;
 	private _emitter: Phaser.GameObjects.Particles.ParticleEmitter;
+	private _chanceUpdateSpeedRelatives: CustomTypes.Gameplay.Obstacle.SpeedChanceType[];
 
 	constructor (private _scene: Phaser.Scene) {
 		this.screenUtility = ScreenUtilController.getInstance();
@@ -150,11 +151,43 @@ export class ObstacleView implements BaseView {
 			bottom + (gameObject.displayHeight / 2)
 		);
 
-		const speedRelative = gameObject.getData(DataProps.speedRelative) as number;
 		const displayPercentage = gameObject.getData(DataProps.displayPercentage) as number;
+		const speedRelative =  this.updateSpeedRelative(gameObject, (gameObject.getData(DataProps.speedRelative) as number));
+		
 		gameObject.setVelocityY(speedRelative * displayPercentage);
 
 		this.setInteractive(gameObject);
+	}
+
+	private initChanceSpeedRelative (): void {
+		const faster: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 35, speed: -15 };
+		const stay: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 50, speed: 0};
+		const slower: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 15, speed: 5 };
+		const chances = [faster, stay, slower];
+
+		const chanceTotal = chances.reduce((val, acc) => {
+			const reducer = { chance: val.chance + acc.chance, speed: 0 };
+			return reducer;
+		}).chance;
+
+		this._chanceUpdateSpeedRelatives = chances.map((chanceSpeed, idx) => {
+			if (idx === 0) {
+				chanceSpeed.chance /= chanceTotal;
+				return chanceSpeed;
+			}
+
+			chanceSpeed.chance = (chanceSpeed.chance / chanceTotal) + chances[idx-1].chance;
+			return chanceSpeed;
+		});
+	}
+
+	private updateSpeedRelative (gameObject: Phaser.Physics.Arcade.Sprite, prevSpeedRelative: number): number {
+		const getChance = Math.random();
+		const pickChance = this._chanceUpdateSpeedRelatives.find((target) => getChance <= target.chance)!;
+
+		const speed = prevSpeedRelative + pickChance.speed;
+		gameObject.setData(DataProps.speedRelative, speed);
+		return speed;
 	}
 
 	private createParticleEmitter (): void {
@@ -194,6 +227,7 @@ export class ObstacleView implements BaseView {
 		this._obstacleGroup = this._scene.physics.add.group();
 		this._backgroundEdges = edges;
 		this.createParticleEmitter();
+		this.initChanceSpeedRelative();
 		this.event.on(EventNames.onSpawn, () => {
 			const assetType = this.getAssetTypeKey();
 			const obstacle = this._obstacleGroup.getChildren()
