@@ -101,7 +101,7 @@ export class ObstacleView implements BaseView {
 			});
 			gameObject.on("drag", (p: Phaser.Input.Pointer, dragX: number) => {
 				const deltaPosX = dragX - (gameObject.getData(props.prevPosX) as number);
-				const calibratePosX = deltaPosX * 0.625; // 0 is easy to swipe, while 1 is hard to swipe
+				const calibratePosX = deltaPosX * 0.4; // 0 is easy to swipe, while 1 is hard to swipe
 				const getDragX = dragX - calibratePosX;
 
 				const [left, right] = this._backgroundEdges;
