@@ -70,7 +70,8 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.obstacleController.stopObstacleVelocity();
 
 			this.time.delayedCall(1650, () => {
-				this.scene.restart(); // FIXME
+				// TODO: Implement gameover panel
+				this.fadeOutRestart();
 			});
 		});
 
@@ -84,7 +85,7 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.gameController.playState();
 		});
 		this.onPlaySFXClick(() => this.audioController.playSFX(Audios.sfx_click.key, { volume: 1.5 }));
-		this.onClickRestart(() => this.scene.restart());
+		this.onClickRestart(() => this.fadeOutRestart());
 
 		this.onCreateFinish(() => {
 			this.playBGMWhenReady();
@@ -96,6 +97,14 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.view.create(
 			this.bgController.displayPercentage()
 		);
+	}
+
+	fadeOutRestart (): void {
+		const cam = this.cameras.main;
+		cam.on(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+			this.scene.restart();
+		});
+		cam.fadeOut(350);
 	}
 
 	playBGMWhenReady (): void {
