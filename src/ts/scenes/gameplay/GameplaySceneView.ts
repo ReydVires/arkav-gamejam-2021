@@ -79,7 +79,7 @@ export class GameplaySceneView implements BaseView {
 		const logo = new Image(this._scene, centerX, height * 0.15, Assets.logo_title.key);
 		logo.transform.setToScaleDisplaySize(this._displayPercentage);
 
-		const contentCredit = "Made by: Yeager, Mastra, Hasbi, Savira, Witsqa";
+		const contentCredit = "Made by: Arsyel, Mastra, Hasbi, Savira, Witsqa";
 		const fontSize = 38 * this._displayPercentage;
 		const creditText = new Text(this._scene, centerX, height * 0.95, contentCredit, {
 			fontFamily: FontAsset.potta.key,
