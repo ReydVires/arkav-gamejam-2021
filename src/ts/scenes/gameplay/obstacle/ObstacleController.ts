@@ -1,6 +1,6 @@
 import { DataProps, EventNames, ObstacleView } from "./ObstacleView";
 
-type OnDestroy = (type: string) => void;
+type OnPlaySFX = (type: string) => void;
 
 export class ObstacleController {
 
@@ -43,8 +43,8 @@ export class ObstacleController {
 		}
 	}
 
-	onDestroy (events: OnDestroy): void {
-		this._view.event.on(EventNames.onDestroy, events);
+	onPlaySFX (events: OnPlaySFX): void {
+		this._view.event.on(EventNames.onPlaySFX, events);
 	}
 
 }

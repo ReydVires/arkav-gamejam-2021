@@ -11,7 +11,7 @@ if (CONFIG.ENABLE_LOG) console.log("[CONFIG]", CONFIG);
 const renderType = (): number => {
 	const isFirefox = /Firefox/i.test(navigator.userAgent);
 	return isFirefox ? Phaser.WEBGL : Phaser.CANVAS;
-}
+};
 
 type CalculateScreenType = {
 	actualWidth: number,
