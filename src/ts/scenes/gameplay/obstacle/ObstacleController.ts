@@ -22,6 +22,10 @@ export class ObstacleController {
 		this._view.deactiveGameObject(gameObject as Phaser.Physics.Arcade.Sprite);
 	}
 
+	stopObstacleVelocity (): void {
+		this._view.obstacles.setVelocityY(0);
+	}
+
 	obstacles (): Phaser.Physics.Arcade.Group {
 		return this._view.obstacles;
 	}
