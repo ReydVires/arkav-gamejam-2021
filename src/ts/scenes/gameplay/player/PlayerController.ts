@@ -22,7 +22,18 @@ export class PlayerController {
 		this._view.damaged();
 	}
 
-	update (time: number, dt: number): void {}
+	private resetMoveTime (): void {
+		this._view.props.moveTimer += this._view.moveTimer;
+	}
+
+	update (time: number, dt: number): void {
+		const timeLoss = dt * 0.2;
+		this._view.props.moveTimer -= timeLoss;
+		if (this._view.props.moveTimer <= 0) {
+			this._view.movePlayerRandom();
+			this.resetMoveTime();
+		}
+	}
 
 	onDamaged (events: OnDamaged): void {
 		this._view.event.on(EventNames.onDamaged, events);
