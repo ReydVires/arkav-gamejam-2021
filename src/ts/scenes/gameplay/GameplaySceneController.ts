@@ -65,8 +65,11 @@ export class GameplaySceneController extends Phaser.Scene {
 
 			this.audioController.playSFX(Audios.sfx_lose.key, { volume: 0.9, rate: 1.15 });
 			this.input.enabled = false;
+			this.gameController.gameOverState();
+
+			this.obstacleController.stopObstacleVelocity();
+
 			this.time.delayedCall(1650, () => {
-				this.gameController.gameOverState();
 				this.scene.restart(); // FIXME
 			});
 		});
@@ -111,10 +114,13 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.view.event.emit(EventNames.onClickRestart);
 		}
 
-		if (this.gameController.state === GameState.PLAYING) this.gameController.update(time, dt);
-		this.bgController.update(time, dt);
-		this.playerController.update(time, dt);
-		if (this.gameController.state === GameState.PLAYING) this.obstacleController.update(time, dt);
+		if (this.gameController.state !== GameState.GAMEOVER) this.bgController.update(time, dt);
+
+		if (this.gameController.state === GameState.PLAYING) {
+			this.gameController.update(time, dt);
+			this.playerController.update(time, dt);
+			this.obstacleController.update(time, dt);
+		}
 	}
 
 	onPlaySFXClick (event: Function): void {
