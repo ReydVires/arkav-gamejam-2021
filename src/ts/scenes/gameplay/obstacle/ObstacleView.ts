@@ -94,17 +94,25 @@ export class ObstacleView implements BaseView {
 			AnimationHelper.AddAnimation(this._scene, animationLog);
 			gameObject.play(animationLog.key);
 
+			const props = { prevPosX: "prevPosX" };
 			gameObject.on("dragstart", () => {
 				this.event.emit(EventNames.onPlaySFX, Assets.obstacle_log.key);
+				gameObject.setData(props.prevPosX, gameObject.x);
 			});
 			gameObject.on("drag", (p: Phaser.Input.Pointer, dragX: number) => {
+				const deltaPosX = dragX - (gameObject.getData(props.prevPosX) as number);
+				const calibratePosX = deltaPosX * 0.625; // 0 is easy to swipe, while 1 is hard to swipe
+				const getDragX = dragX - calibratePosX;
+
 				const [left, right] = this._backgroundEdges;
 				const edge = gameObject.displayWidth / 2;
-				if ((dragX - edge < left) || (dragX + edge > right)) return;
-				gameObject.x = dragX;
+				const isOnRiverside = (getDragX - edge < left) || (getDragX + edge > right);
+				if (isOnRiverside) return;
+
+				gameObject.x = getDragX;
 			});
 			break;
-		default:
+		case Assets.obstacle_trashes.key:
 			const animationTrashes = Animations.obstacle_trashes as CustomTypes.Asset.AnimationInfoType;
 			AnimationHelper.AddAnimation(this._scene, animationTrashes);
 			gameObject.play(animationTrashes.key);
@@ -115,13 +123,16 @@ export class ObstacleView implements BaseView {
 				this.event.emit(EventNames.onPlaySFX, Assets.obstacle_trashes.key);
 			});
 			break;
+		default:
+			// None of them
+			break;
 		}
 	}
 
 	private spawnObstacle (displayPercentage: number, assetType: string): void {
 		const [leftEdge, rightEdge] = this._backgroundEdges;
 		const spawnPosY = this.screenUtility.height;
-		const SPEED_RELATIVE = -300;
+		const SPEED_RELATIVE = -310;
 
 		const obstacle = new ArcadeSprite(this._scene, 0, 0, assetType, 0);
 		this._obstacleGroup.add(obstacle.gameObject);
