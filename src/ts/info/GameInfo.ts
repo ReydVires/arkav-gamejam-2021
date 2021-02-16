@@ -5,7 +5,7 @@ const _CONFIG = CONFIG;
 export { _CONFIG as CONFIG };
 
 export const enum GameState {
-	PREPARING,
+	TITLE,
 	PLAYING,
 	PAUSE,
 	GAMEOVER,

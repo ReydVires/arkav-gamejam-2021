@@ -56,8 +56,6 @@ export declare namespace CustomTypes {
 
     namespace Gameplay {
 
-        type State = "GAME" | "TITLE" | "GAMEOVER"
-
         namespace Obstacle {
 
             type SpeedChanceType = {

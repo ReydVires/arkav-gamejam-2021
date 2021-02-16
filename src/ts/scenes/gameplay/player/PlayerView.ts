@@ -20,13 +20,21 @@ export class PlayerView implements BaseView {
 
 	props = {
 		life: 1,
+		moveTimer: 5500,
 	};
 
 	private _sprite: ArcadeSprite;
+	private _moveTimerRange: number[];
+	private _moveArea: number[];
 
 	constructor (private _scene: Phaser.Scene) {
 		this.screenUtility = ScreenUtilController.getInstance();
 		this.event = new Phaser.Events.EventEmitter();
+	}
+
+	get moveTimer (): number {
+		const [min, max] = this._moveTimerRange;
+		return Phaser.Math.Between(min, max);
 	}
 
 	create (displayPercentage: number, edges: number[]): void {
@@ -40,6 +48,29 @@ export class PlayerView implements BaseView {
 		const animInfoType = Animations.player_raft_ride as CustomTypes.Asset.AnimationInfoType;
 		AnimationHelper.AddAnimation(this._scene, animInfoType);
 		this._sprite.gameObject.play(animInfoType.key);
+
+		this.initMoveComponent();
+	}
+
+	private initMoveComponent (): void {
+		this._moveTimerRange = [1000, 2500];
+		this._moveArea = [
+			this._sprite.gameObject.getLeftCenter().x,
+			this._sprite.gameObject.getCenter().x,
+			this._sprite.gameObject.getRightCenter().x,
+		];
+	}
+
+	movePlayerRandom (): void {
+		const getTargetPosition = Math.floor(Math.random() * this._moveArea.length);
+		const targetX = this._moveArea[getTargetPosition];
+		
+		const playerMoveTween = this._scene.tweens.create({
+			targets: this._sprite.gameObject,
+			x: targetX,
+			duration: 850,
+		});
+		playerMoveTween.play();
 	}
 
 	damaged (): void {

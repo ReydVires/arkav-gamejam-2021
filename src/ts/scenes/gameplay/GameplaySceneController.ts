@@ -7,7 +7,7 @@ import { PlayerController } from "./player/PlayerController";
 import { BackgroundController } from "./background/BackgroundController";
 import { ObstacleController } from "./obstacle/ObstacleController";
 import { GameController } from "./game/GameController";
-import { CONFIG } from "../../info/GameInfo";
+import { CONFIG, GameState } from "../../info/GameInfo";
 
 type OnCreateFinish = (...args: unknown[]) => void;
 
@@ -65,9 +65,13 @@ export class GameplaySceneController extends Phaser.Scene {
 
 			this.audioController.playSFX(Audios.sfx_lose.key, { volume: 0.9, rate: 1.15 });
 			this.input.enabled = false;
+			this.gameController.gameOverState();
+
+			this.obstacleController.stopObstacleVelocity();
+
 			this.time.delayedCall(1650, () => {
-				this.gameController.gameOverState();
-				this.scene.restart(); // FIXME
+				// TODO: Implement gameover panel
+				this.fadeOutRestart();
 			});
 		});
 
@@ -81,7 +85,7 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.gameController.playState();
 		});
 		this.onPlaySFXClick(() => this.audioController.playSFX(Audios.sfx_click.key, { volume: 1.5 }));
-		this.onClickRestart(() => this.scene.restart());
+		this.onClickRestart(() => this.fadeOutRestart());
 
 		this.onCreateFinish(() => {
 			this.playBGMWhenReady();
@@ -93,6 +97,14 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.view.create(
 			this.bgController.displayPercentage()
 		);
+	}
+
+	fadeOutRestart (): void {
+		const cam = this.cameras.main;
+		cam.on(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+			this.scene.restart();
+		});
+		cam.fadeOut(350);
 	}
 
 	playBGMWhenReady (): void {
@@ -111,10 +123,13 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.view.event.emit(EventNames.onClickRestart);
 		}
 
-		if (this.gameController.state === "GAME") this.gameController.update(time, dt);
-		this.bgController.update(time, dt);
-		this.playerController.update(time, dt);
-		if (this.gameController.state === "GAME") this.obstacleController.update(time, dt);
+		if (this.gameController.state !== GameState.GAMEOVER) this.bgController.update(time, dt);
+
+		if (this.gameController.state === GameState.PLAYING) {
+			this.gameController.update(time, dt);
+			this.playerController.update(time, dt);
+			this.obstacleController.update(time, dt);
+		}
 	}
 
 	onPlaySFXClick (event: Function): void {
