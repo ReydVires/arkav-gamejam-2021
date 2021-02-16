@@ -11,6 +11,7 @@ export class BackgroundView implements BaseView {
 
 	private _sprite: Rectangle;
 	private _backgrounds: Image[];
+	private _riversideWidth: number;
 
 	constructor (private _scene: Phaser.Scene) {
 		this.screenUtility = ScreenUtilController.getInstance();
@@ -28,8 +29,8 @@ export class BackgroundView implements BaseView {
 
 	get edge (): number [] {
 		return [
-			this._sprite.gameObject.getLeftCenter().x,
-			this._sprite.gameObject.getRightCenter().x,
+			this._sprite.gameObject.getLeftCenter().x + (this._riversideWidth),
+			this._sprite.gameObject.getRightCenter().x - (this._riversideWidth),
 			this._sprite.gameObject.getTopCenter().y,
 			this._sprite.gameObject.getBottomCenter().y,
 		];
@@ -53,7 +54,7 @@ export class BackgroundView implements BaseView {
 		this._backgrounds.push(riverBg1);
 	}
 
-	private createRiverSide (): void {
+	private createRiverside (): void {
 		const { width, height } = this.screenUtility;
 
 		const riverSideLeft0 = new Image(this._scene, 0, 0, Assets.forest_parallax.key);
@@ -75,6 +76,8 @@ export class BackgroundView implements BaseView {
 		riverSideRight1.transform.setMaxPreferredDisplaySize(width, height);
 		riverSideRight1.gameObject.setOrigin(1, 0).setFlipX(true);
 		this._backgrounds.push(riverSideRight1);
+
+		this._riversideWidth = (riverSideLeft0.gameObject.displayWidth / 2);
 	}
 
 	create (): void {
@@ -84,7 +87,7 @@ export class BackgroundView implements BaseView {
 		this._sprite.transform.setMaxPreferredDisplaySize(width, height);
 
 		this.createRiverBackground();
-		this.createRiverSide();
+		this.createRiverside();
 	}
 
 }

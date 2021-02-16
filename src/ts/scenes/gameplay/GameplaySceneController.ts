@@ -7,6 +7,7 @@ import { PlayerController } from "./player/PlayerController";
 import { BackgroundController } from "./background/BackgroundController";
 import { ObstacleController } from "./obstacle/ObstacleController";
 import { GameController } from "./game/GameController";
+import { CONFIG } from "../../info/GameInfo";
 
 type OnCreateFinish = (...args: unknown[]) => void;
 
@@ -59,28 +60,28 @@ export class GameplaySceneController extends Phaser.Scene {
 		);
 
 		this.playerController.onDamaged((life) => {
-			this.toast.show((life > 0) ? `Player damaged. ${life} chance left!` : `Game over!`);
+			(CONFIG.ON_DEBUG) && this.toast.show((life > 0) ? `Player damaged. ${life} chance left!` : `Game over!`);
 			if (life) return;
 
+			this.audioController.playSFX(Audios.sfx_lose.key, { volume: 0.9, rate: 1.15 });
 			this.input.enabled = false;
-			this.time.delayedCall(1500, () => {
+			this.time.delayedCall(1650, () => {
 				this.gameController.gameOverState();
 				this.scene.restart(); // FIXME
 			});
 		});
 
-		this.obstacleController.onDestroy((type) => {
-			this.audioController.playSFX("sfx_destroy_" + type, {
-				volume: 1.5
-			});
+		this.obstacleController.onPlaySFX((type) => {
+			const prefixSFX = "sfx_destroy_";
+			this.audioController.playSFX(prefixSFX + type, { volume: 1.5 });
 		});
 
 		this.onClickStart(() => {
 			this.view.hideTitleScreen();
 			this.gameController.playState();
 		});
-		this.onPlaySFXClick(() => this.audioController.playSFX(Audios.sfx_click.key));
-		this.onClickRestart(() => this.scene.start(SceneInfo.TITLE.key));
+		this.onPlaySFXClick(() => this.audioController.playSFX(Audios.sfx_click.key, { volume: 1.5 }));
+		this.onClickRestart(() => this.scene.restart());
 
 		this.onCreateFinish(() => {
 			this.playBGMWhenReady();
@@ -106,11 +107,8 @@ export class GameplaySceneController extends Phaser.Scene {
 	}
 
 	update (time: number, dt: number): void {
-		if (this.view.restartKey.isDown) {
+		if (Phaser.Input.Keyboard.JustUp(this.view.restartKey)) {
 			this.view.event.emit(EventNames.onClickRestart);
-		}
-		if (Phaser.Input.Keyboard.JustDown(this.view.debugKey)) {
-			// pass
 		}
 
 		if (this.gameController.state === "GAME") this.gameController.update(time, dt);

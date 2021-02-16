@@ -9,7 +9,6 @@ import { ScreenUtilController } from "../../../modules/screenutility/ScreenUtilC
 export const enum DataProps {
 	deactiveThreshold = "deactiveThreshold",
 	displayPercentage = "displayPercentage",
-	backgroundEdges = "backgroundEdges",
 	assetType = "assetType",
 	speedRelative = "speedRelative",
 }
@@ -17,7 +16,7 @@ export const enum DataProps {
 export const enum EventNames {
 	onSpawn = "onSpawn",
 	onTap = "onTap",
-	onDestroy = "onDestroy",
+	onPlaySFX = "onPlaySFX",
 };
 
 export class ObstacleView implements BaseView {
@@ -30,13 +29,16 @@ export class ObstacleView implements BaseView {
 	};
 
 	private _maxTimeToSpawn: number;
+	private _backgroundEdges: number[];
 	private _obstacleGroup: Phaser.Physics.Arcade.Group;
 	private _emitter: Phaser.GameObjects.Particles.ParticleEmitter;
+	private _chanceUpdateSpeedRelatives: CustomTypes.Gameplay.Obstacle.SpeedChanceType[];
 
 	constructor (private _scene: Phaser.Scene) {
 		this.screenUtility = ScreenUtilController.getInstance();
 		this.event = new Phaser.Events.EventEmitter();
 		this._maxTimeToSpawn = 800;
+		this._backgroundEdges = [];
 	}
 
 	get obstacles (): Phaser.Physics.Arcade.Group {
@@ -48,7 +50,7 @@ export class ObstacleView implements BaseView {
 	}
 
 	private getAssetTypeKey (): string {
-		const assetKeys = [ // TODO: Define with object data property
+		const assetKeys = [
 			Assets.obstacle_rockes.key,
 			Assets.obstacle_log.key,
 			Assets.obstacle_trashes.key,
@@ -72,11 +74,12 @@ export class ObstacleView implements BaseView {
 
 			gameObject.on("pointerup", () => {
 				let prevCounter: number = gameObject.getData(dataProps.counter) ?? 0;
-				if (++prevCounter >= 2) {
+				const tapToDestroy = 2;
+				if (++prevCounter >= tapToDestroy) {
 					gameObject.setData(dataProps.counter, 0);
 					this.playParticle(gameObject);
 					this.deactiveGameObject(gameObject);
-					this.event.emit(EventNames.onDestroy, Assets.obstacle_rockes.key);
+					this.event.emit(EventNames.onPlaySFX, Assets.obstacle_rockes.key);
 					return;
 				}
 				gameObject.setData(dataProps.counter, prevCounter);
@@ -91,25 +94,25 @@ export class ObstacleView implements BaseView {
 			AnimationHelper.AddAnimation(this._scene, animationLog);
 			gameObject.play(animationLog.key);
 
-			gameObject.on("dragstart", () => gameObject.setVelocity(0));
-			gameObject.on("drag", (p: Phaser.Input.Pointer, dragX: number) => {
-				gameObject.x = dragX;
+			const props = { prevPosX: "prevPosX" };
+			gameObject.on("dragstart", () => {
+				this.event.emit(EventNames.onPlaySFX, Assets.obstacle_log.key);
+				gameObject.setData(props.prevPosX, gameObject.x);
 			});
-			gameObject.on("dragend", () => {
-				gameObject.disableInteractive();
-				this._scene.tweens.add({
-					targets: gameObject,
-					alpha: 0,
-					duration: 100,
-					onComplete: () => {
-						this.deactiveGameObject(gameObject);
-						this.event.emit(EventNames.onDestroy, Assets.obstacle_log.key);
-						gameObject.setAlpha(1);
-					}
-				});
+			gameObject.on("drag", (p: Phaser.Input.Pointer, dragX: number) => {
+				const deltaPosX = dragX - (gameObject.getData(props.prevPosX) as number);
+				const calibratePosX = deltaPosX * 0.625; // 0 is easy to swipe, while 1 is hard to swipe
+				const getDragX = dragX - calibratePosX;
+
+				const [left, right] = this._backgroundEdges;
+				const edge = gameObject.displayWidth / 2;
+				const isOnRiverside = (getDragX - edge < left) || (getDragX + edge > right);
+				if (isOnRiverside) return;
+
+				gameObject.x = getDragX;
 			});
 			break;
-		default:
+		case Assets.obstacle_trashes.key:
 			const animationTrashes = Animations.obstacle_trashes as CustomTypes.Asset.AnimationInfoType;
 			AnimationHelper.AddAnimation(this._scene, animationTrashes);
 			gameObject.play(animationTrashes.key);
@@ -117,16 +120,19 @@ export class ObstacleView implements BaseView {
 			gameObject.once("pointerup", () => {
 				this.playParticle(gameObject);
 				this.deactiveGameObject(gameObject);
-				this.event.emit(EventNames.onDestroy, Assets.obstacle_trashes.key);
+				this.event.emit(EventNames.onPlaySFX, Assets.obstacle_trashes.key);
 			});
+			break;
+		default:
+			// None of them
 			break;
 		}
 	}
 
-	private spawnObstacle (displayPercentage: number, edges: number[], assetType: string): void {
-		const [leftEdge, rightEdge, topEdge, bottomEdge] = edges;
+	private spawnObstacle (displayPercentage: number, assetType: string): void {
+		const [leftEdge, rightEdge] = this._backgroundEdges;
 		const spawnPosY = this.screenUtility.height;
-		const SPEED_RELATIVE = -300;
+		const SPEED_RELATIVE = -310;
 
 		const obstacle = new ArcadeSprite(this._scene, 0, 0, assetType, 0);
 		this._obstacleGroup.add(obstacle.gameObject);
@@ -134,7 +140,6 @@ export class ObstacleView implements BaseView {
 		obstacle.transform.setToScaleDisplaySize(displayPercentage);
 		obstacle.gameObject.setData(DataProps.assetType, assetType);
 		obstacle.gameObject.setData(DataProps.displayPercentage, displayPercentage);
-		obstacle.gameObject.setData(DataProps.backgroundEdges, edges);
 		obstacle.gameObject.setData(DataProps.deactiveThreshold, -obstacle.transform.displayHeight);
 		obstacle.gameObject.setData(DataProps.speedRelative, SPEED_RELATIVE);
 
@@ -151,17 +156,49 @@ export class ObstacleView implements BaseView {
 		gameObject.setActive(true);
 		gameObject.enableBody(false, 0, 0, true, true);
 
-		const [left, right, top, bottom] = gameObject.getData(DataProps.backgroundEdges) as number[];
+		const [left, right, top, bottom] = this._backgroundEdges;
 		gameObject.setPosition(
 			Phaser.Math.Between(left + (gameObject.displayWidth / 2), right - (gameObject.displayWidth / 2)),
 			bottom + (gameObject.displayHeight / 2)
 		);
 
-		const speedRelative = gameObject.getData(DataProps.speedRelative) as number;
 		const displayPercentage = gameObject.getData(DataProps.displayPercentage) as number;
+		const speedRelative =  this.updateSpeedRelative(gameObject, (gameObject.getData(DataProps.speedRelative) as number));
+		
 		gameObject.setVelocityY(speedRelative * displayPercentage);
 
 		this.setInteractive(gameObject);
+	}
+
+	private initChanceSpeedRelative (): void {
+		const faster: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 35, speed: -15 };
+		const stay: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 50, speed: 0};
+		const slower: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 15, speed: 5 };
+		const chances = [faster, stay, slower];
+
+		const chanceTotal = chances.reduce((val, acc) => {
+			const reducer = { chance: val.chance + acc.chance, speed: 0 };
+			return reducer;
+		}).chance;
+
+		this._chanceUpdateSpeedRelatives = chances.map((chanceSpeed, idx) => {
+			if (idx === 0) {
+				chanceSpeed.chance /= chanceTotal;
+				return chanceSpeed;
+			}
+
+			chanceSpeed.chance = (chanceSpeed.chance / chanceTotal) + chances[idx-1].chance;
+			return chanceSpeed;
+		});
+	}
+
+	private updateSpeedRelative (gameObject: Phaser.Physics.Arcade.Sprite, prevSpeedRelative: number): number {
+		const getChance = Math.random();
+		const pickChance = this._chanceUpdateSpeedRelatives.find((target) => getChance <= target.chance)!;
+
+		const speed = prevSpeedRelative + pickChance.speed;
+		gameObject.setData(DataProps.speedRelative, speed);
+		return speed;
 	}
 
 	private createParticleEmitter (): void {
@@ -199,7 +236,9 @@ export class ObstacleView implements BaseView {
 
 	create (displayPercentage: number, edges: number[]): void {
 		this._obstacleGroup = this._scene.physics.add.group();
+		this._backgroundEdges = edges;
 		this.createParticleEmitter();
+		this.initChanceSpeedRelative();
 		this.event.on(EventNames.onSpawn, () => {
 			const assetType = this.getAssetTypeKey();
 			const obstacle = this._obstacleGroup.getChildren()
@@ -208,7 +247,7 @@ export class ObstacleView implements BaseView {
 				this.reuseObstacle(obstacle as Phaser.Physics.Arcade.Sprite);
 				return;
 			}
-			this.spawnObstacle(displayPercentage, edges, assetType);
+			this.spawnObstacle(displayPercentage, assetType);
 		});
 	}
 

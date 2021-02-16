@@ -17,12 +17,10 @@ export const Assets = {
 		url: 'img/loading/img_loading_frame.png',
 		type: AssetType.STATIC
 	},
-	loading_text: {
-		key: 'loading_text',
-		url: 'img/loading/spr_loading_text.png',
-		width: 448,
-		height: 512/4,
-		type: AssetType.SPRITESHEET
+	logo: {
+		key: 'logo',
+		url: 'img/loading/img_logo.png',
+		type: AssetType.STATIC
 	},
 
 };

@@ -22,7 +22,6 @@ export class GameplaySceneView implements BaseView {
 	private _displayPercentage: number;
 	private _uiTitleScreen: Phaser.GameObjects.Container;
 	private _restartKey: Phaser.Input.Keyboard.Key;
-	private _debugKey: Phaser.Input.Keyboard.Key;
 	private _scoreText: Text;
 
 	constructor (private _scene: Phaser.Scene) {
@@ -32,10 +31,6 @@ export class GameplaySceneView implements BaseView {
 
 	get restartKey (): Phaser.Input.Keyboard.Key {
 		return this._restartKey;
-	}
-
-	get debugKey (): Phaser.Input.Keyboard.Key {
-		return this._debugKey;
 	}
 
 	private createScoreText (): void {
@@ -116,9 +111,7 @@ export class GameplaySceneView implements BaseView {
 
 	create (displayPercentage: number): void {
 		this._displayPercentage = displayPercentage;
-
 		this._restartKey = this._scene.input.keyboard.addKey("R");
-		this._debugKey = this._scene.input.keyboard.addKey("Z");
 
 		this.createScoreText();
 		this.createTitleUI();
