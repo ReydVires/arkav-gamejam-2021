@@ -47,8 +47,12 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.bgController.getEdge()
 		);
 
+		this.gameController.onHighscoreChange((highscore) => {
+			this.view.setHighscore(`new!\n${highscore}`);
+		});
 		this.gameController.onScoreChange((score) => {
 			this.view.setScore(score);
+			this.gameController.setHighscore(score);
 		});
 
 		this.playerController.registerOverlap(
@@ -64,20 +68,19 @@ export class GameplaySceneController extends Phaser.Scene {
 		});
 
 		this.playerController.onDead(() => {
-      this.audioController.playSFX(Audios.sfx_lose.key, { volume: 0.9, rate: 1.15 });
-			this.input.setGlobalTopOnly(true);
 			this.gameController.gameOverState();
-
 			this.audioController.playSFX(Audios.sfx_lose.key, { volume: 0.9, rate: 1.15 });
+
+			this.obstacleController.obstacles().getChildren().forEach((go) => {
+				go.removeAllListeners();
+			});
 			this.obstacleController.stopObstacleVelocity();
 
-			this.view.createGameOverScreen();
-			this.debugController.log(`Score: ${this.gameController.score}`);
-
-			this.time.delayedCall(1650, () => {
-				// TODO: Implement gameover panel
-				this.fadeOutRestart();
+			this.time.delayedCall(1575, () => {
+				this.view.showGameOverPanel();
 			});
+
+			this.debugController.log(`Score: ${this.gameController.score}`);
 		});
 
 		this.obstacleController.onPlaySFX((type) => {
@@ -87,6 +90,7 @@ export class GameplaySceneController extends Phaser.Scene {
 
 		this.onClickStart(() => {
 			this.view.hideTitleScreen();
+			this.view.setHighscore(this.gameController.highscore.toString());
 			this.gameController.playState();
 		});
 		this.onPlaySFXClick(() => this.audioController.playSFX(Audios.sfx_click.key, { volume: 1.5 }));
