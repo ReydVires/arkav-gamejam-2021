@@ -1,4 +1,4 @@
-import { AudioController } from "../../modules/audio/AudioController";
+ import { AudioController } from "../../modules/audio/AudioController";
 import { Audios } from "../../library/AssetAudio";
 import { EventNames, GameplaySceneView } from "./GameplaySceneView";
 import { DebugController } from "./debug/DebugController";
@@ -64,15 +64,12 @@ export class GameplaySceneController extends Phaser.Scene {
 			if (life) return;
 
 			this.audioController.playSFX(Audios.sfx_lose.key, { volume: 0.9, rate: 1.15 });
-			this.input.enabled = false;
+			this.input.setGlobalTopOnly(true);
 			this.gameController.gameOverState();
 
 			this.obstacleController.stopObstacleVelocity();
 
-			this.time.delayedCall(1650, () => {
-				// TODO: Implement gameover panel
-				this.fadeOutRestart();
-			});
+			this.view.createGameOverScreen();
 		});
 
 		this.obstacleController.onPlaySFX((type) => {
