@@ -2,6 +2,7 @@ import { FontAsset } from "../../library/AssetFont";
 import { Assets } from "../../library/AssetGameplay";
 import { BaseView } from "../../modules/core/BaseView";
 import { Image } from "../../modules/gameobjects/Image";
+import { Rectangle } from "../../modules/gameobjects/Rectangle";
 import { Text } from "../../modules/gameobjects/Text";
 import { ScreenUtilController } from "../../modules/screenutility/ScreenUtilController";
 
@@ -22,10 +23,11 @@ export class GameplaySceneView implements BaseView {
 	private _displayPercentage: number;
 	private _uiTitleScreen: Phaser.GameObjects.Container;
 	private _restartKey: Phaser.Input.Keyboard.Key;
-	private _scoreText: Text;
+	private _scoreUIText: Text;
+	private _scoreResultText: Text;
 	private _scoreBestText: Text;
-	private _scoreString: string;
-	private _scoreBestString: string;
+	private _gameOverPanel: Phaser.GameObjects.Container;
+	private _overlayPanel: Rectangle;
 
 	constructor (private _scene: Phaser.Scene) {
 		this.screenUtility = ScreenUtilController.getInstance();
@@ -46,57 +48,51 @@ export class GameplaySceneView implements BaseView {
 
 		const { x, y } = scoreHolder.transform.getDisplayPositionFromCoordinate(0.5, 0.5);
 		const fontSize = 64 * scoreHolder.transform.displayToOriginalHeightRatio;
-		this._scoreText = new Text(this._scene, x, y, "0", {
+		this._scoreUIText = new Text(this._scene, x, y, "0", {
 			fontFamily: FontAsset.potta.key,
 			fontStyle: "bold",
 			align: "center",
 			fontSize: `${fontSize}px`
 		});
-		this._scoreText.gameObject.setOrigin(0.5);
+		this._scoreUIText.gameObject.setOrigin(0.5);
 
 		const container = this._scene.add.container().setDepth(UI_LAYER);
-		container.add([scoreHolder.gameObject, this._scoreText.gameObject]);
+		container.add([scoreHolder.gameObject, this._scoreUIText.gameObject]);
 	}
 
-	createGameOverScreen (): void {
+	private createGameOverUI (): void {
 		const { centerX, centerY, width, height } = this.screenUtility;
 
-		const scoreHolder = new Image(this._scene, centerX, centerY, Assets.panel_game_over.key);
-		scoreHolder.transform.setToScaleDisplaySize(this._displayPercentage);
-		
-		const { x: bottomX, y: bottomY } = scoreHolder.gameObject.getBottomLeft();
-		const { x: bottomRightX, y: bottomRightY } = scoreHolder.gameObject.getBottomRight();
-		
-		const { x, y } = scoreHolder.transform.getDisplayPositionFromCoordinate(0.5, 0.5);
-		const fontSize = 42 * scoreHolder.transform.displayToOriginalHeightRatio;
-		const container = this._scene.add.container().setDepth(UI_LAYER);
+		this._overlayPanel = new Rectangle(this._scene, centerX, centerY, width, height, 0x2c3e50);
+		this._overlayPanel.gameObject.setInteractive().setDepth(UI_LAYER);
+		this._overlayPanel.gameObject.setAlpha(0.35).setVisible(false);
 
-		// best score
-		this._scoreBestText = new Text(this._scene, x, y, "0", {
+		const gameOverPanel = new Image(this._scene, centerX, centerY, Assets.panel_game_over.key);
+		gameOverPanel.transform.setToScaleDisplaySize(this._displayPercentage);
+
+		const fontSize = 64 * gameOverPanel.transform.displayToOriginalHeightRatio;
+		const scoreBestTextPos = gameOverPanel.transform.getDisplayPositionFromCoordinate(0.5, 0.5);
+		this._scoreBestText = new Text(this._scene, scoreBestTextPos.x, scoreBestTextPos.y, "0", {
 			fontFamily: FontAsset.potta.key,
 			fontStyle: "normal",
 			align: "center",
 			fontSize: `${fontSize}px`
 		});
 		this._scoreBestText.gameObject.setOrigin(0.5);
-		this._scoreBestText.gameObject.setText(this._scoreBestString);
-		container.add([scoreHolder.gameObject, this._scoreBestText.gameObject]);
 
-		// new score 
-		this._scoreText = new Text(this._scene, x, y+80, "0", {
+		const scoreResultTextPos = gameOverPanel.transform.getDisplayPositionFromCoordinate(0.5, 0.8);
+		this._scoreResultText = new Text(this._scene, scoreResultTextPos.x, scoreResultTextPos.y, "0", {
 			fontFamily: FontAsset.potta.key,
 			fontStyle: "normal",
 			align: "center",
 			fontSize: `${fontSize}px`
 		});
-		this._scoreText.gameObject.setOrigin(0.5);
-		this._scoreText.gameObject.setText(this._scoreString);
-		container.add([scoreHolder.gameObject, this._scoreText.gameObject]);
-		
-		
-		const restartBtn = new Image(this._scene, centerX, bottomY+25, Assets.btn_retry.key);
+		this._scoreResultText.gameObject.setOrigin(0.5);
+
+		const { y: bottomY } = gameOverPanel.gameObject.getBottomCenter();
+		const restartBtn = new Image(this._scene, centerX, bottomY, Assets.btn_retry.key);
 		restartBtn.transform.setToScaleDisplaySize(this._displayPercentage);
-		restartBtn.gameObject.setOrigin(0.5);
+		restartBtn.gameObject.setOrigin(0.5, 0);
 
 		const restartBtnEffect = this._scene.tweens.create({
 			targets: restartBtn.gameObject,
@@ -111,6 +107,15 @@ export class GameplaySceneView implements BaseView {
 			this.event.emit(EventNames.onPlaySFXClick);
 			restartBtnEffect.play();
 		});
+
+		this._gameOverPanel = this._scene.add.container().setDepth(UI_LAYER);
+		this._gameOverPanel.add([
+			gameOverPanel.gameObject,
+			this._scoreResultText.gameObject,
+			this._scoreBestText.gameObject,
+			restartBtn.gameObject
+		]);
+		this._gameOverPanel.setVisible(false);
 	}
 
 	private createTitleUI (): void {
@@ -151,16 +156,13 @@ export class GameplaySceneView implements BaseView {
 		this._uiTitleScreen.add([logo.gameObject, startBtn.gameObject, creditText.gameObject]);
 	}
 
-	setScore (score: number): void {
-		this._scoreText.gameObject.setText(score.toString());
-		this._scoreString = score.toString();
+	setHighscore (score: string): void {
+		this._scoreBestText.gameObject.setText(score);
 	}
 
-	setHighScore (status: boolean): void {
-		if(this._scoreString > this._scoreBestString){
-			this._scoreBestString = this._scoreString;
-			window.localStorage.setItem('scoreBestString', this._scoreBestString);
-		}
+	setScore (score: number): void {
+		this._scoreUIText.gameObject.setText(score.toString());
+		this._scoreResultText.gameObject.setText(score.toString());
 	}
 
 	hideTitleScreen (): void {
@@ -175,13 +177,28 @@ export class GameplaySceneView implements BaseView {
 		tweenEffect.play();
 	}
 
+	showGameOverPanel (): void {
+		const { height } = this.screenUtility;
+		const panelEffect = this._scene.tweens.create({
+			onStart: () => this._gameOverPanel.setVisible(true),
+			targets: this._gameOverPanel,
+			props: {
+				y: { getStart: () => -height, getEnd: () => 0 }
+			},
+			duration: 500,
+			ease: Phaser.Math.Easing.Back.InOut,
+		});
+		this._overlayPanel.gameObject.setVisible(true);
+		panelEffect.play();
+	}
+
 	create (displayPercentage: number): void {
 		this._displayPercentage = displayPercentage;
 		this._restartKey = this._scene.input.keyboard.addKey("R");
-		this._scoreBestString = JSON.parse(localStorage.getItem('scoreBestString') || '0');
 
 		this.createScoreText();
 		this.createTitleUI();
+		this.createGameOverUI();
 		this.event.emit(EventNames.onCreateFinish);
 	}
 
