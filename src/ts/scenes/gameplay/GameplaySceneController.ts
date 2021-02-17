@@ -61,13 +61,16 @@ export class GameplaySceneController extends Phaser.Scene {
 
 		this.playerController.onDamaged((life) => {
 			(CONFIG.ON_DEBUG) && this.toast.show((life > 0) ? `Player damaged. ${life} chance left!` : `Game over!`);
-			if (life) return;
+		});
 
-			this.audioController.playSFX(Audios.sfx_lose.key, { volume: 0.9, rate: 1.15 });
+		this.playerController.onDead(() => {
 			this.input.enabled = false;
 			this.gameController.gameOverState();
 
+			this.audioController.playSFX(Audios.sfx_lose.key, { volume: 0.9, rate: 1.15 });
 			this.obstacleController.stopObstacleVelocity();
+
+			this.debugController.log(`Score: ${this.gameController.score}`);
 
 			this.time.delayedCall(1650, () => {
 				// TODO: Implement gameover panel
