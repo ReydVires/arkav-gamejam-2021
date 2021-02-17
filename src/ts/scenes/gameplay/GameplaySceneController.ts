@@ -64,12 +64,14 @@ export class GameplaySceneController extends Phaser.Scene {
 		});
 
 		this.playerController.onDead(() => {
-			this.input.enabled = false;
+      this.audioController.playSFX(Audios.sfx_lose.key, { volume: 0.9, rate: 1.15 });
+			this.input.setGlobalTopOnly(true);
 			this.gameController.gameOverState();
 
 			this.audioController.playSFX(Audios.sfx_lose.key, { volume: 0.9, rate: 1.15 });
 			this.obstacleController.stopObstacleVelocity();
 
+			this.view.createGameOverScreen();
 			this.debugController.log(`Score: ${this.gameController.score}`);
 
 			this.time.delayedCall(1650, () => {
