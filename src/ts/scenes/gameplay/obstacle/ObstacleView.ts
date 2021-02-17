@@ -62,10 +62,12 @@ export class ObstacleView implements BaseView {
 	private setInteractive (gameObject: Phaser.Physics.Arcade.Sprite): void {
 		gameObject.setInteractive({ useHandCursor: true });
 
-		const assetType = gameObject.getData(DataProps.assetType) as string;
 		const dataProps = {
-			counter: "counter"
+			counter: "counter",
+			prevPosX: "prevPosX"
 		};
+
+		const assetType = gameObject.getData(DataProps.assetType) as string;
 		switch (assetType) {
 		case Assets.obstacle_rockes.key:
 			const animationRockes = Animations.obstacle_rockes as CustomTypes.Asset.AnimationInfoType;
@@ -94,13 +96,12 @@ export class ObstacleView implements BaseView {
 			AnimationHelper.AddAnimation(this._scene, animationLog);
 			gameObject.play(animationLog.key);
 
-			const props = { prevPosX: "prevPosX" };
 			gameObject.on("dragstart", () => {
 				this.event.emit(EventNames.onPlaySFX, Assets.obstacle_log.key);
-				gameObject.setData(props.prevPosX, gameObject.x);
+				gameObject.setData(dataProps.prevPosX, gameObject.x);
 			});
 			gameObject.on("drag", (p: Phaser.Input.Pointer, dragX: number) => {
-				const deltaPosX = dragX - (gameObject.getData(props.prevPosX) as number);
+				const deltaPosX = dragX - (gameObject.getData(dataProps.prevPosX) as number);
 				const calibratePosX = deltaPosX * 0.575; // 0 is easy to swipe, while 1 is hard to swipe
 				const getDragX = dragX - calibratePosX;
 
