@@ -11,6 +11,7 @@ const PLAYER_LAYER = 20;
 export const enum EventNames {
 	onCreateFinish = "onCreateFinish",
 	onDamaged = "onDamaged",
+	onDead = "onDead",
 };
 
 export class PlayerView implements BaseView {
@@ -53,7 +54,7 @@ export class PlayerView implements BaseView {
 	}
 
 	private initMoveComponent (): void {
-		this._moveTimerRange = [1000, 2500];
+		this._moveTimerRange = [1000, 4000];
 		this._moveArea = [
 			this._sprite.gameObject.getLeftCenter().x,
 			this._sprite.gameObject.getCenter().x,
@@ -64,7 +65,8 @@ export class PlayerView implements BaseView {
 	movePlayerRandom (): void {
 		const getTargetPosition = Math.floor(Math.random() * this._moveArea.length);
 		const targetX = this._moveArea[getTargetPosition];
-		
+		if (targetX === this._sprite.gameObject.x) return; // Dont play tween if its still
+
 		const playerMoveTween = this._scene.tweens.create({
 			targets: this._sprite.gameObject,
 			x: targetX,
@@ -93,7 +95,9 @@ export class PlayerView implements BaseView {
 				this._sprite.gameObject.enableBody(false, 0, 0, true, true);
 			}
 		});
+
 		this.event.emit(EventNames.onDamaged, this.props.life);
+		if (this.props.life <= 0) this.event.emit(EventNames.onDead);
 		tweenEffect.play();
 	}
 

@@ -28,6 +28,10 @@ export class GameController {
 		return this._state;
 	}
 
+	get score (): number {
+		return this._score;
+	}
+
 	init (): void {
 		this._state = GameState.TITLE;
 		this._score = 0;
