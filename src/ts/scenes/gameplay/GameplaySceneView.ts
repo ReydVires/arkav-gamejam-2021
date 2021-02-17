@@ -91,13 +91,13 @@ export class GameplaySceneView implements BaseView {
 
 		const { y: bottomY } = gameOverPanel.gameObject.getBottomCenter();
 		const restartBtn = new Image(this._scene, centerX, bottomY, Assets.btn_retry.key);
-		restartBtn.transform.setToScaleDisplaySize(this._displayPercentage);
+		restartBtn.transform.setToScaleDisplaySize(gameOverPanel.transform.displayToOriginalHeightRatio);
 		restartBtn.gameObject.setOrigin(0.5, 0);
 
 		const restartBtnEffect = this._scene.tweens.create({
 			targets: restartBtn.gameObject,
 			props: {
-				scale: { getEnd: () => restartBtn.gameObject.scale * 0.9 }
+				scale: { getEnd: () => restartBtn.gameObject.scale * 0.85 }
 			},
 			duration: 55,
 			yoyo: true,
