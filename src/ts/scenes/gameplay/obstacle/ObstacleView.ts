@@ -170,7 +170,7 @@ export class ObstacleView implements BaseView {
 		this.setInteractive(gameObject);
 	}
 
-	private initChanceSpeedRelative (): void {
+	private initAdaptiveSpeedRelative (): void {
 		const faster: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 35, speed: -15 };
 		const stay: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 50, speed: 0};
 		const slower: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 15, speed: 5 };
@@ -238,7 +238,7 @@ export class ObstacleView implements BaseView {
 		this._obstacleGroup = this._scene.physics.add.group();
 		this._backgroundEdges = edges;
 		this.createParticleEmitter();
-		this.initChanceSpeedRelative();
+		this.initAdaptiveSpeedRelative();
 		this.event.on(EventNames.onSpawn, () => {
 			const assetType = this.getAssetTypeKey();
 			const obstacle = this._obstacleGroup.getChildren()
