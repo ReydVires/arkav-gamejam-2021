@@ -55,6 +55,14 @@ export class ObstacleView implements BaseView {
 			Assets.obstacle_log.key,
 			Assets.obstacle_trashes.key,
 		];
+		// TODO: Setup for futher development
+		// const obstacleTypes = [
+		// 	{
+		// 		texture: Assets.obstacle_rockes.key,
+		// 		speedRelative: 0,
+		// 		interaction: () => {},
+		// 	},
+		// ];
 		const randomPick = Math.floor(Math.random() * assetKeys.length);
 		return assetKeys[randomPick];
 	}
