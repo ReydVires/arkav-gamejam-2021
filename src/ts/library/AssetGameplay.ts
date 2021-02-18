@@ -12,11 +12,6 @@ export const Assets = {
 		url: 'img/gui/img_btn_start.png',
 		type: AssetType.STATIC
 	},
-	btn_pause: {
-		key: 'btn_pause',
-		url: 'img/gui/img_btn_pause.png',
-		type: AssetType.STATIC
-	},
 	btn_retry: {
 		key: 'btn_retry',
 		url: 'img/gui/img_btn_retry.png',
@@ -27,6 +22,11 @@ export const Assets = {
 		url: 'img/gui/img_btn_home.png',
 		type: AssetType.STATIC
 	},
+	btn_instruction: {
+		key: 'btn_instruction',
+		url: 'img/gui/img_btn_instruction.png',
+		type: AssetType.STATIC
+	},
 	score_holder: {
 		key: 'score_holder',
 		url: 'img/gui/img_score_holder.png',
@@ -35,6 +35,11 @@ export const Assets = {
 	panel_game_over: {
 		key: 'panel_over',
 		url: 'img/gui/img_panel_over.png',
+		type: AssetType.STATIC
+	},
+	panel_instructions: {
+		key: 'panel_instructions',
+		url: 'img/gui/img_panel_instructions.png',
 		type: AssetType.STATIC
 	},
 	bg_river: {
