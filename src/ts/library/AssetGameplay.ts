@@ -12,11 +12,6 @@ export const Assets = {
 		url: 'img/gui/img_btn_start.png',
 		type: AssetType.STATIC
 	},
-	btn_pause: {
-		key: 'btn_pause',
-		url: 'img/gui/img_btn_pause.png',
-		type: AssetType.STATIC
-	},
 	btn_retry: {
 		key: 'btn_retry',
 		url: 'img/gui/img_btn_retry.png',
@@ -27,6 +22,11 @@ export const Assets = {
 		url: 'img/gui/img_btn_home.png',
 		type: AssetType.STATIC
 	},
+	btn_play: {
+		key: 'btn_play',
+		url: 'img/gui/img_btn_play.png',
+		type: AssetType.STATIC
+	},
 	score_holder: {
 		key: 'score_holder',
 		url: 'img/gui/img_score_holder.png',
@@ -35,6 +35,11 @@ export const Assets = {
 	panel_game_over: {
 		key: 'panel_over',
 		url: 'img/gui/img_panel_over.png',
+		type: AssetType.STATIC
+	},
+	panel_instructions: {
+		key: 'panel_instructions',
+		url: 'img/gui/img_panel_instructions.png',
 		type: AssetType.STATIC
 	},
 	bg_river: {
@@ -64,8 +69,8 @@ export const Assets = {
 	obstacle_log: {
 		key: 'obstacle_log',
 		url: 'img/obstacles/spr_obstacle_log.png',
-		width: 2304/6,
-		height: 72,
+		width: 984/6,
+		height: 86,
 		type: AssetType.SPRITESHEET
 	},
 	obstacle_rockes: {

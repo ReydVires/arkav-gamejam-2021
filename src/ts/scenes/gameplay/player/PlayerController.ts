@@ -27,7 +27,7 @@ export class PlayerController {
 	}
 
 	update (time: number, dt: number): void {
-		const timeLoss = dt * 0.15;
+		const timeLoss = dt * 0.125;
 		this._view.props.moveTimer -= timeLoss;
 		if (this._view.props.moveTimer <= 0) {
 			this._view.movePlayerRandom();
@@ -37,6 +37,10 @@ export class PlayerController {
 
 	onDamaged (events: OnDamaged): void {
 		this._view.event.on(EventNames.onDamaged, events);
+	}
+
+	onDead (events: Function): void {
+		this._view.event.once(EventNames.onDead, events);
 	}
 
 }

@@ -55,6 +55,14 @@ export class ObstacleView implements BaseView {
 			Assets.obstacle_log.key,
 			Assets.obstacle_trashes.key,
 		];
+		// TODO: Setup for futher development
+		// const obstacleTypes = [
+		// 	{
+		// 		texture: Assets.obstacle_rockes.key,
+		// 		speedRelative: 0,
+		// 		interaction: () => {},
+		// 	},
+		// ];
 		const randomPick = Math.floor(Math.random() * assetKeys.length);
 		return assetKeys[randomPick];
 	}
@@ -62,10 +70,12 @@ export class ObstacleView implements BaseView {
 	private setInteractive (gameObject: Phaser.Physics.Arcade.Sprite): void {
 		gameObject.setInteractive({ useHandCursor: true });
 
-		const assetType = gameObject.getData(DataProps.assetType) as string;
 		const dataProps = {
-			counter: "counter"
+			counter: "counter",
+			prevPosX: "prevPosX"
 		};
+
+		const assetType = gameObject.getData(DataProps.assetType) as string;
 		switch (assetType) {
 		case Assets.obstacle_rockes.key:
 			const animationRockes = Animations.obstacle_rockes as CustomTypes.Asset.AnimationInfoType;
@@ -74,7 +84,7 @@ export class ObstacleView implements BaseView {
 
 			gameObject.on("pointerup", () => {
 				let prevCounter: number = gameObject.getData(dataProps.counter) ?? 0;
-				const tapToDestroy = 2;
+				const tapToDestroy = 3;
 				if (++prevCounter >= tapToDestroy) {
 					gameObject.setData(dataProps.counter, 0);
 					this.playParticle(gameObject);
@@ -94,13 +104,12 @@ export class ObstacleView implements BaseView {
 			AnimationHelper.AddAnimation(this._scene, animationLog);
 			gameObject.play(animationLog.key);
 
-			const props = { prevPosX: "prevPosX" };
 			gameObject.on("dragstart", () => {
 				this.event.emit(EventNames.onPlaySFX, Assets.obstacle_log.key);
-				gameObject.setData(props.prevPosX, gameObject.x);
+				gameObject.setData(dataProps.prevPosX, gameObject.x);
 			});
 			gameObject.on("drag", (p: Phaser.Input.Pointer, dragX: number) => {
-				const deltaPosX = dragX - (gameObject.getData(props.prevPosX) as number);
+				const deltaPosX = dragX - (gameObject.getData(dataProps.prevPosX) as number);
 				const calibratePosX = deltaPosX * 0.575; // 0 is easy to swipe, while 1 is hard to swipe
 				const getDragX = dragX - calibratePosX;
 
@@ -170,7 +179,7 @@ export class ObstacleView implements BaseView {
 		this.setInteractive(gameObject);
 	}
 
-	private initChanceSpeedRelative (): void {
+	private initAdaptiveSpeedRelative (): void {
 		const faster: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 35, speed: -15 };
 		const stay: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 50, speed: 0};
 		const slower: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 15, speed: 5 };
@@ -238,7 +247,7 @@ export class ObstacleView implements BaseView {
 		this._obstacleGroup = this._scene.physics.add.group();
 		this._backgroundEdges = edges;
 		this.createParticleEmitter();
-		this.initChanceSpeedRelative();
+		this.initAdaptiveSpeedRelative();
 		this.event.on(EventNames.onSpawn, () => {
 			const assetType = this.getAssetTypeKey();
 			const obstacle = this._obstacleGroup.getChildren()
