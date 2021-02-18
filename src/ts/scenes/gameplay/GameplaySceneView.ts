@@ -178,6 +178,7 @@ export class GameplaySceneView implements BaseView {
 			});
 		});
 		playBtn.gameObject.setInteractive({useHandCursor: true}).on("pointerdown", () => {
+			this.event.emit(EventNames.onPlaySFXClick);
 			this.event.emit(EventNames.onClickStart);
 			playBtnEffect.play();
 		});
