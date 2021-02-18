@@ -87,5 +87,12 @@ export const Assets = {
 		height: 192,
 		type: AssetType.SPRITESHEET
 	},
+	obstacle_trashes_drown: {
+		key: 'obstacle_trashes_drown',
+		url: 'img/obstacles/spr_obstacle_trashes_drown.png',
+		width: 2250/5,
+		height: 192,
+		type: AssetType.SPRITESHEET
+	},
 
 };
