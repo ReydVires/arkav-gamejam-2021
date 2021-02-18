@@ -10,6 +10,7 @@ import { GameController } from "./game/GameController";
 import { CONFIG, GameState } from "../../info/GameInfo";
 
 type OnCreateFinish = (...args: unknown[]) => void;
+type SceneData = { isRetry?: boolean }
 
 export class GameplaySceneController extends Phaser.Scene {
 
@@ -25,7 +26,7 @@ export class GameplaySceneController extends Phaser.Scene {
 		super({key: SceneInfo.GAMEPLAY.key});
 	}
 
-	init (): void {
+	init (sceneData: SceneData): void {
 		this.toast.configure(this);
 		this.view = new GameplaySceneView(this);
 		this.audioController = AudioController.getInstance();
@@ -90,15 +91,19 @@ export class GameplaySceneController extends Phaser.Scene {
 
 		this.onClickStart(() => {
 			this.view.hideTitleScreen();
-			this.view.setHighscore(this.gameController.highscore.toString());
-			this.gameController.playState();
+			this.startGame();
 		});
 		this.onPlaySFXClick(() => this.audioController.playSFX(Audios.sfx_click.key, { volume: 1.5 }));
-		this.onClickRestart(() => this.fadeOutRestart());
+		this.onClickHome(() => this.fadeOutRestart());
+		this.onClickRestart(() => this.fadeOutRestart(true));
 
 		this.onCreateFinish(() => {
 			this.playBGMWhenReady();
 			this.debugController.show(true);
+			if (!sceneData.isRetry) return;
+
+			this.view.hideTitleScreen(true);
+			this.startGame();
 		});
 	}
 
@@ -108,12 +113,18 @@ export class GameplaySceneController extends Phaser.Scene {
 		);
 	}
 
-	fadeOutRestart (): void {
+	startGame (): void {
+		this.view.setHighscore(this.gameController.highscore.toString());
+		this.gameController.playState();
+	}
+
+	fadeOutRestart (isRetry?: boolean): void {
 		const cam = this.cameras.main;
 		cam.on(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-			this.scene.restart();
+			this.scene.restart({ isRetry });
 		});
 		cam.fadeOut(350);
+		this.input.enabled = false;
 	}
 
 	playBGMWhenReady (): void {
@@ -129,7 +140,7 @@ export class GameplaySceneController extends Phaser.Scene {
 
 	update (time: number, dt: number): void {
 		if (Phaser.Input.Keyboard.JustUp(this.view.restartKey)) {
-			this.view.event.emit(EventNames.onClickRestart);
+			this.view.event.emit(EventNames.onClickHome);
 		}
 
 		if (this.gameController.state !== GameState.GAMEOVER) this.bgController.update(time, dt);
@@ -143,6 +154,10 @@ export class GameplaySceneController extends Phaser.Scene {
 
 	onPlaySFXClick (event: Function): void {
 		this.view.event.on(EventNames.onPlaySFXClick, event);
+	}
+
+	onClickHome (event: Function): void {
+		this.view.event.on(EventNames.onClickHome, event);
 	}
 
 	onClickRestart (event: Function): void {
