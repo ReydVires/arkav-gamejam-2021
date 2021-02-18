@@ -22,9 +22,9 @@ export const Assets = {
 		url: 'img/gui/img_btn_home.png',
 		type: AssetType.STATIC
 	},
-	btn_instruction: {
-		key: 'btn_instruction',
-		url: 'img/gui/img_btn_instruction.png',
+	btn_play: {
+		key: 'btn_play',
+		url: 'img/gui/img_btn_play.png',
 		type: AssetType.STATIC
 	},
 	score_holder: {
@@ -69,8 +69,8 @@ export const Assets = {
 	obstacle_log: {
 		key: 'obstacle_log',
 		url: 'img/obstacles/spr_obstacle_log.png',
-		width: 2304/6,
-		height: 72,
+		width: 984/6,
+		height: 86,
 		type: AssetType.SPRITESHEET
 	},
 	obstacle_rockes: {
