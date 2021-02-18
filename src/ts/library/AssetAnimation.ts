@@ -39,5 +39,14 @@ export const Animations = {
 		frameSpeed: 6,
 		loop: true
 	},
+	obstacle_trashes_drown: {
+		key: 'obstacle_trashes_drown',
+		type: AssetType.ANIMATION,
+		spritesheetRef: AssetsGameplay.obstacle_trashes_drown.key,
+		start: 0,
+		end: 4,
+		frameSpeed: 8,
+		loop: false
+	},
 
 };
