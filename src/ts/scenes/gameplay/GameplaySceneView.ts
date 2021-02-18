@@ -90,27 +90,13 @@ export class GameplaySceneView implements BaseView {
 		});
 		this._scoreResultText.gameObject.setOrigin(0.5);
 
-		const setEffect = (gameObject: Phaser.GameObjects.Image, onComplete: Phaser.Types.Tweens.TweenOnCompleteCallback): Phaser.Tweens.Tween => {
-			const props: Phaser.Types.Tweens.TweenPropConfig = {
-				getEnd: () => gameObject.scale * 0.85
-			};
-			return this._scene.tweens.create({
-				targets: gameObject,
-				props: { scale: props },
-				duration: 55,
-				yoyo: true,
-				onComplete: onComplete,
-			});
-		};
-
 		const { y: bottomY } = gameOverPanel.gameObject.getBottomCenter();
-
 		const restartBtn = new Image(this._scene, centerX, bottomY, Assets.btn_retry.key);
 		restartBtn.transform.setToScaleDisplaySize(gameOverPanel.transform.displayToOriginalHeightRatio);
-		restartBtn.gameObject.x -= restartBtn.transform.displayWidth / 4;
+		restartBtn.gameObject.x -= restartBtn.transform.displayWidth / 1.5;
 		restartBtn.gameObject.y += restartBtn.transform.displayHeight / 2;
 
-		const restartEffect = setEffect(restartBtn.gameObject, () => this.event.emit(EventNames.onClickRestart));
+		const restartEffect = this.setEffect(restartBtn.gameObject, () => this.event.emit(EventNames.onClickRestart));
 		restartBtn.gameObject.setInteractive({useHandCursor: true}).once("pointerdown", () => {
 			this.event.emit(EventNames.onPlaySFXClick);
 			restartEffect.play();
@@ -119,9 +105,9 @@ export class GameplaySceneView implements BaseView {
 		const homeBtnPos = restartBtn.transform.getDisplayPositionFromCoordinate(1, 0.5);
 		const homeBtn = new Image(this._scene, homeBtnPos.x, homeBtnPos.y, Assets.btn_home.key);
 		homeBtn.transform.setToScaleDisplaySize(gameOverPanel.transform.displayToOriginalHeightRatio);
-		homeBtn.gameObject.x += homeBtn.transform.displayWidth / 2;
+		homeBtn.gameObject.x += homeBtn.transform.displayWidth / 1.5;
 
-		const homeBtnEffect = setEffect(homeBtn.gameObject, () => this.event.emit(EventNames.onClickHome));
+		const homeBtnEffect = this.setEffect(homeBtn.gameObject, () => this.event.emit(EventNames.onClickHome));
 		homeBtn.gameObject.setInteractive({useHandCursor: true}).once("pointerdown", () => {
 			this.event.emit(EventNames.onPlaySFXClick);
 			homeBtnEffect.play();
@@ -143,6 +129,7 @@ export class GameplaySceneView implements BaseView {
 
 		const startBtn = new Image(this._scene, centerX, centerY, Assets.btn_start.key);
 		startBtn.transform.setToScaleDisplaySize(this._displayPercentage);
+		startBtn.gameObject.y += startBtn.transform.displayHeight / 2;
 
 		const startBtnEffect = this._scene.tweens.create({
 			targets: startBtn.gameObject,
@@ -151,11 +138,11 @@ export class GameplaySceneView implements BaseView {
 			},
 			duration: 55,
 			yoyo: true,
-			onComplete: () => this.event.emit(EventNames.onClickStart),
 		});
 
 		startBtn.gameObject.setInteractive({useHandCursor: true}).once("pointerdown", () => {
 			this.event.emit(EventNames.onPlaySFXClick);
+			this.hideTitleScreen();
 			startBtnEffect.play();
 		});
 
@@ -171,10 +158,53 @@ export class GameplaySceneView implements BaseView {
 		});
 		creditText.gameObject.setOrigin(0.5);
 
+		const instructionPanel = new Image(this._scene, centerX + width, centerY, Assets.panel_instructions.key);
+		instructionPanel.transform.setToScaleDisplaySize(this._displayPercentage * 1.3);
+
+		const playBtnPos = instructionPanel.transform.getDisplayPositionFromCoordinate(0.5, 1);
+		const playBtn = new Image(this._scene, playBtnPos.x, playBtnPos.y, Assets.btn_play.key);
+		playBtn.transform.setToScaleDisplaySize(this._displayPercentage);
+		playBtn.gameObject.y += playBtn.transform.displayHeight * 0.4;
+
+		const playBtnEffect = this.setEffect(playBtn.gameObject, () => {
+			this._scene.tweens.add({
+				targets: this._uiTitleScreen,
+				props: {
+					x: { getEnd: () => -this._uiTitleScreen.displayWidth * 2 },
+				},
+				ease: Phaser.Math.Easing.Quintic.InOut,
+				duration: 250,
+				onComplete: () => this._uiTitleScreen.setVisible(false)
+			});
+		});
+		playBtn.gameObject.setInteractive({useHandCursor: true}).on("pointerdown", () => {
+			this.event.emit(EventNames.onClickStart);
+			playBtnEffect.play();
+		});
+
 		this._uiTitleScreen = this._scene.add.container().setDepth(UI_LAYER);
 		this._uiTitleScreen.setSize(width, height);
-		this._uiTitleScreen.add([logo.gameObject, startBtn.gameObject, creditText.gameObject]);
+		this._uiTitleScreen.add([
+			logo.gameObject,
+			startBtn.gameObject,
+			creditText.gameObject,
+			instructionPanel.gameObject,
+			playBtn.gameObject,
+		]);
 	}
+
+	private setEffect (gameObject: Phaser.GameObjects.Image, onComplete: Phaser.Types.Tweens.TweenOnCompleteCallback): Phaser.Tweens.Tween {
+		const props: Phaser.Types.Tweens.TweenPropConfig = {
+			getEnd: () => gameObject.scale * 0.85
+		};
+		return this._scene.tweens.create({
+			targets: gameObject,
+			props: { scale: props },
+			duration: 55,
+			yoyo: true,
+			onComplete: onComplete,
+		});
+	};
 
 	setHighscore (score: string): void {
 		this._scoreBestText.gameObject.setText(score);
@@ -187,7 +217,7 @@ export class GameplaySceneView implements BaseView {
 
 	hideTitleScreen (isImmediate?: boolean): void {
 		if (isImmediate) {
-			this._uiTitleScreen.setX(-this._uiTitleScreen.displayWidth);
+			this._uiTitleScreen.setVisible(false);
 			return;
 		}
 
@@ -197,7 +227,7 @@ export class GameplaySceneView implements BaseView {
 				x: { getStart: () => 0, getEnd: () => -this._uiTitleScreen.displayWidth },
 			},
 			ease: Phaser.Math.Easing.Quintic.InOut,
-			duration: (isImmediate) ? 1 : 500,
+			duration: 500,
 		});
 		tweenEffect.play();
 	}

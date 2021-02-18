@@ -89,10 +89,7 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.audioController.playSFX(prefixSFX + type, { volume: 1.5 });
 		});
 
-		this.onClickStart(() => {
-			this.view.hideTitleScreen();
-			this.startGame();
-		});
+		this.onClickStart(() => this.startGame());
 		this.onPlaySFXClick(() => this.audioController.playSFX(Audios.sfx_click.key, { volume: 1.5 }));
 		this.onClickHome(() => this.fadeOutRestart());
 		this.onClickRestart(() => this.fadeOutRestart(true));
