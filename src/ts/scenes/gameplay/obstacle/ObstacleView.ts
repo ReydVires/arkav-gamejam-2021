@@ -126,9 +126,17 @@ export class ObstacleView implements BaseView {
 			AnimationHelper.AddAnimation(this._scene, animationTrashes);
 			gameObject.play(animationTrashes.key);
 
+			const animationTrashesDrown = Animations.obstacle_trashes_drown as CustomTypes.Asset.AnimationInfoType;
+			const onAnimTrashDrown = AnimationHelper.AddAnimation(this._scene, animationTrashesDrown) as Phaser.Animations.Animation;
+
 			gameObject.once("pointerup", () => {
-				this.playParticle(gameObject);
-				this.deactiveGameObject(gameObject);
+				onAnimTrashDrown.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+					this.deactiveGameObject(gameObject);
+				});
+				onAnimTrashDrown.once(Phaser.Animations.Events.ANIMATION_START, () => {
+					gameObject.setVelocityY(-35);
+				});
+				gameObject.play(Animations.obstacle_trashes_drown.key);
 				this.event.emit(EventNames.onPlaySFX, Assets.obstacle_trashes.key);
 			});
 			break;
