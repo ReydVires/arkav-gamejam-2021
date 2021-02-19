@@ -69,14 +69,35 @@ export const Assets = {
 	obstacle_log: {
 		key: 'obstacle_log',
 		url: 'img/obstacles/spr_obstacle_log.png',
-		width: 984/6,
-		height: 86,
+		width: 1800/6,
+		height: 112,
 		type: AssetType.SPRITESHEET
 	},
 	obstacle_rockes: {
 		key: 'obstacle_rockes',
 		url: 'img/obstacles/spr_obstacle_rockes.png',
 		width: 640/5,
+		height: 128,
+		type: AssetType.SPRITESHEET
+	},
+	obstacle_rockes_2: {
+		key: 'obstacle_rockes_2',
+		url: 'img/obstacles/spr_obstacle_rockes_2.png',
+		width: 768/6,
+		height: 128,
+		type: AssetType.SPRITESHEET
+	},
+	obstacle_rockes_3: {
+		key: 'obstacle_rockes_3',
+		url: 'img/obstacles/spr_obstacle_rockes_3.png',
+		width: 768/6,
+		height: 128,
+		type: AssetType.SPRITESHEET
+	},
+	obstacle_rockes_destroy: {
+		key: 'obstacle_rockes_destroy',
+		url: 'img/obstacles/spr_obstacle_rockes_destroy.png',
+		width: 768/6,
 		height: 128,
 		type: AssetType.SPRITESHEET
 	},
