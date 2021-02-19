@@ -68,8 +68,8 @@ export class GameplaySceneView implements BaseView {
 		this._overlayPanel.gameObject.setInteractive().setDepth(UI_LAYER);
 		this._overlayPanel.gameObject.setAlpha(0.35).setVisible(false);
 
-		const gameOverPanel = new Image(this._scene, centerX, centerY, Assets.panel_game_over.key);
-		gameOverPanel.transform.setToScaleDisplaySize(this._displayPercentage);
+		const gameOverPanel = new Image(this._scene, centerX, centerY * 0.875, Assets.panel_game_over.key);
+		gameOverPanel.transform.setToScaleDisplaySize(this._displayPercentage * 1.3);
 
 		const fontSize = 64 * gameOverPanel.transform.displayToOriginalHeightRatio;
 		const scoreBestTextPos = gameOverPanel.transform.getDisplayPositionFromCoordinate(0.5, 0.5);
@@ -92,9 +92,9 @@ export class GameplaySceneView implements BaseView {
 
 		const { y: bottomY } = gameOverPanel.gameObject.getBottomCenter();
 		const restartBtn = new Image(this._scene, centerX, bottomY, Assets.btn_retry.key);
-		restartBtn.transform.setToScaleDisplaySize(gameOverPanel.transform.displayToOriginalHeightRatio);
+		restartBtn.transform.setToScaleDisplaySize(gameOverPanel.transform.displayToOriginalHeightRatio * 1.2);
 		restartBtn.gameObject.x -= restartBtn.transform.displayWidth / 1.5;
-		restartBtn.gameObject.y += restartBtn.transform.displayHeight / 2;
+		restartBtn.gameObject.y += restartBtn.transform.displayHeight / 2.35;
 
 		const restartEffect = this.setEffect(restartBtn.gameObject, () => this.event.emit(EventNames.onClickRestart));
 		restartBtn.gameObject.setInteractive({useHandCursor: true}).once("pointerdown", () => {
@@ -104,7 +104,7 @@ export class GameplaySceneView implements BaseView {
 
 		const homeBtnPos = restartBtn.transform.getDisplayPositionFromCoordinate(1, 0.5);
 		const homeBtn = new Image(this._scene, homeBtnPos.x, homeBtnPos.y, Assets.btn_home.key);
-		homeBtn.transform.setToScaleDisplaySize(gameOverPanel.transform.displayToOriginalHeightRatio);
+		homeBtn.transform.setToScaleDisplaySize(gameOverPanel.transform.displayToOriginalHeightRatio * 1.2);
 		homeBtn.gameObject.x += homeBtn.transform.displayWidth / 1.5;
 
 		const homeBtnEffect = this.setEffect(homeBtn.gameObject, () => this.event.emit(EventNames.onClickHome));
