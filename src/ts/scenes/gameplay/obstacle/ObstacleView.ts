@@ -95,7 +95,8 @@ export class ObstacleView implements BaseView {
 						this.deactiveGameObject(gameObject);
 					});
 					onAnimRockDestroy.once(Phaser.Animations.Events.ANIMATION_START, () => {
-						gameObject.setVelocityY(-35);
+						gameObject.setVelocityY(0);
+						gameObject.removeAllListeners();
 					});
 					gameObject.play(animationRockDestroy.key);
 
@@ -105,12 +106,24 @@ export class ObstacleView implements BaseView {
 				gameObject.setData(dataProps.counter, prevCounter);
 
 				const animData = [
-					Animations.obstacle_rockes_2,
-					Animations.obstacle_rockes_3
+					Animations.obstacle_rock_tap_destroy, // On destroy anim
+					Animations.obstacle_rock_tap_destroy2,
+					Animations.obstacle_rockes_2, // After destroy anim
+					Animations.obstacle_rockes_3,
 				];
-				const animationRockes = animData[prevCounter-1] as CustomTypes.Asset.AnimationInfoType;
-				AnimationHelper.AddAnimation(this._scene, animationRockes);
-				gameObject.play(animationRockes.key);
+
+				const animIndex = prevCounter - 1;
+				const animDestroyRockes = animData[animIndex] as CustomTypes.Asset.AnimationInfoType;
+				const animAfterRockes = animData[animIndex + 2] as CustomTypes.Asset.AnimationInfoType;
+
+				const onAnimRockPlay = AnimationHelper.AddAnimation(this._scene, animDestroyRockes) as Phaser.Animations.Animation;
+				AnimationHelper.AddAnimation(this._scene, animAfterRockes) as Phaser.Animations.Animation;
+
+				onAnimRockPlay.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+					gameObject.play(animAfterRockes.key);
+				});
+
+				gameObject.play(animDestroyRockes.key);
 			});
 			break;
 		case Assets.obstacle_log.key:
@@ -152,7 +165,7 @@ export class ObstacleView implements BaseView {
 					this.deactiveGameObject(gameObject);
 				});
 				onAnimTrashDrown.once(Phaser.Animations.Events.ANIMATION_START, () => {
-					gameObject.setVelocityY(-35);
+					gameObject.setVelocityY(0);
 				});
 				gameObject.play(Animations.obstacle_trashes_drown.key);
 				this.event.emit(EventNames.onPlaySFX, Assets.obstacle_trashes.key);
