@@ -101,6 +101,20 @@ export const Assets = {
 		height: 128,
 		type: AssetType.SPRITESHEET
 	},
+	obstacle_rock_tap_destroy: {
+		key: 'obstacle_rock_tap_destroy',
+		url: 'img/obstacles/spr_obstacle_rock_tap_destroy.png',
+		width: 768/6,
+		height: 128,
+		type: AssetType.SPRITESHEET
+	},
+	obstacle_rock_tap_destroy2: {
+		key: 'obstacle_rock_tap_destroy2',
+		url: 'img/obstacles/spr_obstacle_rock_tap_destroy2.png',
+		width: 768/6,
+		height: 128,
+		type: AssetType.SPRITESHEET
+	},
 	obstacle_trashes: {
 		key: 'obstacle_trashes',
 		url: 'img/obstacles/spr_obstacle_trashes.png',

@@ -57,6 +57,24 @@ export const Animations = {
 		frameSpeed: 10,
 		loop: false
 	},
+	obstacle_rock_tap_destroy: {
+		key: 'obstacle_rock_tap_destroy',
+		type: AssetType.ANIMATION,
+		spritesheetRef: AssetsGameplay.obstacle_rock_tap_destroy.key,
+		start: 0,
+		end: 5,
+		frameSpeed: 10,
+		loop: false
+	},
+	obstacle_rock_tap_destroy2: {
+		key: 'obstacle_rock_tap_destroy2',
+		type: AssetType.ANIMATION,
+		spritesheetRef: AssetsGameplay.obstacle_rock_tap_destroy2.key,
+		start: 0,
+		end: 5,
+		frameSpeed: 10,
+		loop: false
+	},
 	obstacle_trashes: {
 		key: 'obstacle_trashes',
 		type: AssetType.ANIMATION,
