@@ -82,17 +82,35 @@ export class ObstacleView implements BaseView {
 			AnimationHelper.AddAnimation(this._scene, animationRockes);
 			gameObject.play(animationRockes.key);
 
+			const animationRockDestroy = Animations.obstacle_rockes_destroy as CustomTypes.Asset.AnimationInfoType;
+			const onAnimRockDestroy = AnimationHelper.AddAnimation(this._scene, animationRockDestroy) as Phaser.Animations.Animation;
+
 			gameObject.on("pointerup", () => {
 				let prevCounter: number = gameObject.getData(dataProps.counter) ?? 0;
 				const tapToDestroy = 3;
 				if (++prevCounter >= tapToDestroy) {
 					gameObject.setData(dataProps.counter, 0);
-					this.playParticle(gameObject);
-					this.deactiveGameObject(gameObject);
+
+					onAnimRockDestroy.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+						this.deactiveGameObject(gameObject);
+					});
+					onAnimRockDestroy.once(Phaser.Animations.Events.ANIMATION_START, () => {
+						gameObject.setVelocityY(-35);
+					});
+					gameObject.play(animationRockDestroy.key);
+
 					this.event.emit(EventNames.onPlaySFX, Assets.obstacle_rockes.key);
 					return;
 				}
 				gameObject.setData(dataProps.counter, prevCounter);
+
+				const animData = [
+					Animations.obstacle_rockes_2,
+					Animations.obstacle_rockes_3
+				];
+				const animationRockes = animData[prevCounter-1] as CustomTypes.Asset.AnimationInfoType;
+				AnimationHelper.AddAnimation(this._scene, animationRockes);
+				gameObject.play(animationRockes.key);
 			});
 			break;
 		case Assets.obstacle_log.key:
