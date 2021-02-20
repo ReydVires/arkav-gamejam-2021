@@ -22,18 +22,20 @@ export class EnvironmentController {
 
 	update (time: number, dt: number): void {
 		this._view.environmentGroup.getChildren().forEach((go) => {
-			const envGameObject = go as Phaser.GameObjects.Sprite;
-
-			const [offsetX, threshold] = envGameObject.getData(DataProps.disableEdgePos) as number[];
-			const fromLeft = envGameObject.getData(DataProps.sourceSide) as boolean;
-			const speedTime = (envGameObject.getData(DataProps.speed) as number) * (dt * 0.01);
-
-			envGameObject.x += speedTime;
-			envGameObject.y += (speedTime * envGameObject.getData(DataProps.syncSpeedY) as number) * (fromLeft ? -1 : 1);
-
-			const posX = envGameObject.x + offsetX;
-			if (fromLeft ? (posX >= threshold) : (posX <= threshold) ) {
-				this._view.event.emit(EventNames.onDeactive, envGameObject);
+			if (go.active) {
+				const envGameObject = go as Phaser.GameObjects.Sprite;
+	
+				const [offsetX, threshold] = envGameObject.getData(DataProps.disableEdgePos) as number[];
+				const fromLeft = envGameObject.getData(DataProps.sourceSide) as boolean;
+				const speedTime = (envGameObject.getData(DataProps.speed) as number) * (dt * 0.01);
+	
+				envGameObject.x += speedTime;
+				envGameObject.y += (speedTime * envGameObject.getData(DataProps.syncSpeedY) as number) * (fromLeft ? -1 : 1);
+	
+				const posX = envGameObject.x + offsetX;
+				if (fromLeft ? (posX >= threshold) : (posX <= threshold) ) {
+					this._view.event.emit(EventNames.onDeactive, envGameObject);
+				}
 			}
 		});
 
