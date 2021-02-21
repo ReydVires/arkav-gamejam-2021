@@ -68,7 +68,7 @@ export class EnvironmentView implements BaseView {
 		const [birdSyncRotation, birdSyncSpeed] = this.rotation(sourceSideFomLeft);
 
 		const bird = new Sprite(this._scene, sourceSideFomLeft ? 0 : width, this.randomPosY, Assets.bird_silhouette.key);
-		bird.transform.setToScaleDisplaySize(displayPercentage * 0.75);
+		bird.transform.setToScaleDisplaySize(displayPercentage * Phaser.Math.FloatBetween(0.5, 0.8));
 		bird.gameObject.x += bird.transform.displayWidth / 2 * (sourceSideFomLeft ? -1 : 1) ;
 		bird.gameObject.setAlpha(0.65);
 		bird.gameObject.setRotation(birdSyncRotation);
