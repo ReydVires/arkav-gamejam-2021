@@ -99,6 +99,11 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.onPlaySFXClick(() => this.audioController.playSFX(Audios.sfx_click.key, { volume: 1.5 }));
 		this.onClickHome(() => this.fadeOutRestart());
 		this.onClickRestart(() => this.fadeOutRestart(true));
+		this.onClickMute(() => {
+			const isMuted = this.audioController.isMuted();
+			(isMuted) ? this.audioController.mute() : this.audioController.unmute();
+			this.toast.show("Audio is " + (isMuted ? "mute" : "on"));
+		});
 
 		this.onCreateFinish(() => {
 			this.playBGMWhenReady();
@@ -146,10 +151,15 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.view.event.emit(EventNames.onClickHome);
 		}
 
+		if (Phaser.Input.Keyboard.JustUp(this.view.muteKey)) {
+			this.view.event.emit(EventNames.onClickMute);
+			
+		}
+
 		if (this.gameController.state !== GameState.GAMEOVER) {
 			this.bgController.update(time, dt);
 			this.environmentController.update(time, dt);
-		};
+		}
 
 		if (this.gameController.state === GameState.PLAYING) {
 			this.gameController.update(time, dt);
@@ -172,6 +182,10 @@ export class GameplaySceneController extends Phaser.Scene {
 
 	onClickStart (event: Function): void {
 		this.view.event.on(EventNames.onClickStart, event);
+	}
+
+	onClickMute (event: Function): void {
+		this.view.event.on(EventNames.onClickMute, event);
 	}
 
 	onCreateFinish (event: OnCreateFinish): void {
