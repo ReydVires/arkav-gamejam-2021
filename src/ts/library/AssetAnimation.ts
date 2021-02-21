@@ -93,5 +93,14 @@ export const Animations = {
 		frameSpeed: 8,
 		loop: false
 	},
+	bird_silhouette: {
+		key: 'bird_silhouette',
+		type: AssetType.ANIMATION,
+		spritesheetRef: AssetsGameplay.bird_silhouette.key,
+		start: 0,
+		end: 4,
+		frameSpeed: 6,
+		loop: true
+	},
 
 };

@@ -8,6 +8,7 @@ import { BackgroundController } from "./background/BackgroundController";
 import { ObstacleController } from "./obstacle/ObstacleController";
 import { GameController } from "./game/GameController";
 import { CONFIG, GameState } from "../../info/GameInfo";
+import { EnvironmentController } from "./environment/EnvironmentController";
 
 type OnCreateFinish = (...args: unknown[]) => void;
 type SceneData = { isRetry?: boolean }
@@ -21,6 +22,7 @@ export class GameplaySceneController extends Phaser.Scene {
 	bgController: BackgroundController;
 	playerController: PlayerController;
 	obstacleController: ObstacleController;
+	environmentController: EnvironmentController;
 
 	constructor () {
 		super({key: SceneInfo.GAMEPLAY.key});
@@ -35,6 +37,7 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.bgController = new BackgroundController(this);
 		this.playerController = new PlayerController(this);
 		this.obstacleController = new ObstacleController(this);
+		this.environmentController = new EnvironmentController(this);
 
 		this.debugController.init();
 		this.gameController.init();
@@ -46,6 +49,9 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.obstacleController.init(
 			this.bgController.displayPercentage(),
 			this.bgController.getEdge()
+		);
+		this.environmentController.init(
+			this.bgController.displayPercentage()
 		);
 
 		this.gameController.onHighscoreChange((highscore) => {
@@ -140,7 +146,10 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.view.event.emit(EventNames.onClickHome);
 		}
 
-		if (this.gameController.state !== GameState.GAMEOVER) this.bgController.update(time, dt);
+		if (this.gameController.state !== GameState.GAMEOVER) {
+			this.bgController.update(time, dt);
+			this.environmentController.update(time, dt);
+		};
 
 		if (this.gameController.state === GameState.PLAYING) {
 			this.gameController.update(time, dt);

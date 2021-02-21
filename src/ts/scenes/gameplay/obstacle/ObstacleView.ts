@@ -17,7 +17,7 @@ export const enum EventNames {
 	onSpawn = "onSpawn",
 	onTap = "onTap",
 	onPlaySFX = "onPlaySFX",
-};
+}
 
 export class ObstacleView implements BaseView {
 
@@ -37,7 +37,7 @@ export class ObstacleView implements BaseView {
 	constructor (private _scene: Phaser.Scene) {
 		this.screenUtility = ScreenUtilController.getInstance();
 		this.event = new Phaser.Events.EventEmitter();
-		this._maxTimeToSpawn = 800;
+		this._maxTimeToSpawn = 1100; // 800
 		this._backgroundEdges = [];
 	}
 
@@ -82,35 +82,34 @@ export class ObstacleView implements BaseView {
 			AnimationHelper.AddAnimation(this._scene, animationRockes);
 			gameObject.play(animationRockes.key);
 
+			const animData = [
+				Animations.obstacle_rock_tap_destroy, // On destroy anim
+				Animations.obstacle_rock_tap_destroy2,
+				Animations.obstacle_rockes_2, // After destroy anim
+				Animations.obstacle_rockes_3,
+			];
+
 			const animationRockDestroy = Animations.obstacle_rockes_destroy as CustomTypes.Asset.AnimationInfoType;
 			const onAnimRockDestroy = AnimationHelper.AddAnimation(this._scene, animationRockDestroy) as Phaser.Animations.Animation;
+			gameObject.once("animationcomplete-" + animationRockDestroy.key, () => {
+				this.deactiveGameObject(gameObject);
+			});
 
 			gameObject.on("pointerup", () => {
 				let prevCounter: number = gameObject.getData(dataProps.counter) ?? 0;
 				const tapToDestroy = 3;
 				if (++prevCounter >= tapToDestroy) {
-					gameObject.setData(dataProps.counter, 0);
+					gameObject.disableInteractive();
+					gameObject.setData(dataProps.counter, 0); // Reset tap counter
+					this.event.emit(EventNames.onPlaySFX, Assets.obstacle_rockes.key);
 
-					onAnimRockDestroy.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-						this.deactiveGameObject(gameObject);
-					});
 					onAnimRockDestroy.once(Phaser.Animations.Events.ANIMATION_START, () => {
 						gameObject.setVelocityY(0);
-						gameObject.removeAllListeners();
 					});
 					gameObject.play(animationRockDestroy.key);
-
-					this.event.emit(EventNames.onPlaySFX, Assets.obstacle_rockes.key);
 					return;
 				}
 				gameObject.setData(dataProps.counter, prevCounter);
-
-				const animData = [
-					Animations.obstacle_rock_tap_destroy, // On destroy anim
-					Animations.obstacle_rock_tap_destroy2,
-					Animations.obstacle_rockes_2, // After destroy anim
-					Animations.obstacle_rockes_3,
-				];
 
 				const animIndex = prevCounter - 1;
 				const animDestroyRockes = animData[animIndex] as CustomTypes.Asset.AnimationInfoType;
@@ -160,10 +159,10 @@ export class ObstacleView implements BaseView {
 			const animationTrashesDrown = Animations.obstacle_trashes_drown as CustomTypes.Asset.AnimationInfoType;
 			const onAnimTrashDrown = AnimationHelper.AddAnimation(this._scene, animationTrashesDrown) as Phaser.Animations.Animation;
 
+			gameObject.once("animationcomplete-" + animationTrashesDrown.key, () => {
+				this.deactiveGameObject(gameObject);
+			});
 			gameObject.once("pointerup", () => {
-				onAnimTrashDrown.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-					this.deactiveGameObject(gameObject);
-				});
 				onAnimTrashDrown.once(Phaser.Animations.Events.ANIMATION_START, () => {
 					gameObject.setVelocityY(0);
 				});
@@ -180,7 +179,7 @@ export class ObstacleView implements BaseView {
 	private spawnObstacle (displayPercentage: number, assetType: string): void {
 		const [leftEdge, rightEdge] = this._backgroundEdges;
 		const spawnPosY = this.screenUtility.height;
-		const SPEED_RELATIVE = -310;
+		const SPEED_RELATIVE = -100; // -310
 
 		const obstacle = new ArcadeSprite(this._scene, 0, 0, assetType, 0);
 		this._obstacleGroup.add(obstacle.gameObject);
