@@ -1,3 +1,4 @@
+import { CONFIG } from "../../info/GameInfo";
 import { FontAsset } from "../../library/AssetFont";
 import { Assets } from "../../library/AssetGameplay";
 import { BaseView } from "../../modules/core/BaseView";
@@ -12,6 +13,7 @@ export const enum EventNames {
 	onPlaySFXClick = "onPlaySFXClick",
 	onClickStart = "onClickStart",
 	onClickHome = "onClickHome",
+	onClickMute = "onClickMute",
 	onClickRestart = "onClickRestart",
 	onCreateFinish = "onCreateFinish",
 };
@@ -24,6 +26,7 @@ export class GameplaySceneView implements BaseView {
 	private _displayPercentage: number;
 	private _uiTitleScreen: Phaser.GameObjects.Container;
 	private _restartKey: Phaser.Input.Keyboard.Key;
+	private _muteKey: Phaser.Input.Keyboard.Key;
 	private _scoreUIText: Text;
 	private _scoreResultText: Text;
 	private _scoreBestText: Text;
@@ -37,6 +40,10 @@ export class GameplaySceneView implements BaseView {
 
 	get restartKey (): Phaser.Input.Keyboard.Key {
 		return this._restartKey;
+	}
+
+	get muteKey (): Phaser.Input.Keyboard.Key {
+		return this._muteKey;
 	}
 
 	private createScoreText (): void {
@@ -205,7 +212,17 @@ export class GameplaySceneView implements BaseView {
 			yoyo: true,
 			onComplete: onComplete,
 		});
-	};
+	}
+
+	createDebugLinePointer (): void {
+		if (!CONFIG.ENABLE_LOG) return;
+		const debugLine = this._scene.add.graphics().setDepth(100);
+		this._scene.input.on("pointerdown", (p: Phaser.Input.Pointer) => {
+			debugLine.clear().lineStyle(1, 0x00ff00);
+			debugLine.lineBetween(0, p.y, this.screenUtility.width, p.y);
+			debugLine.lineBetween(p.x, 0, p.x, this.screenUtility.height);
+		});
+	}
 
 	setHighscore (score: string): void {
 		this._scoreBestText.gameObject.setText(score);
@@ -251,11 +268,14 @@ export class GameplaySceneView implements BaseView {
 	create (displayPercentage: number): void {
 		this._displayPercentage = displayPercentage;
 		this._restartKey = this._scene.input.keyboard.addKey("R");
+		this._muteKey = this._scene.input.keyboard.addKey("M");
 
 		this.createScoreText();
 		this.createTitleUI();
 		this.createGameOverUI();
 		this.event.emit(EventNames.onCreateFinish);
+
+		this.createDebugLinePointer();
 	}
 
 }
