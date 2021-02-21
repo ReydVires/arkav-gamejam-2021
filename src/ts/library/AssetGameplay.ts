@@ -129,5 +129,12 @@ export const Assets = {
 		height: 192,
 		type: AssetType.SPRITESHEET
 	},
+	bird_silhouette: {
+		key: 'bird_silhouette',
+		url: 'img/misc/spr_bird_silhouette.png',
+		width: 1090/5,
+		height: 218,
+		type: AssetType.SPRITESHEET
+	},
 
 };

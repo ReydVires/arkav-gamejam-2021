@@ -1,6 +1,6 @@
 {
   "name": "raka-journey",
-  "version": "0.9.65",
+  "version": "0.9.7",
   "description": "Arkav Game Jam 2021",
   "main": "src/index.js",
   "author": "ReydVires",
