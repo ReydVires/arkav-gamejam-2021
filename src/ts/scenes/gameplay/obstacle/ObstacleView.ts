@@ -105,6 +105,8 @@ export class ObstacleView implements BaseView {
 
 					onAnimRockDestroy.once(Phaser.Animations.Events.ANIMATION_START, () => {
 						gameObject.setVelocityY(0);
+						gameObject.disableBody(true, false);
+						gameObject.setActive(true);
 					});
 					gameObject.play(animationRockDestroy.key);
 					return;
@@ -166,6 +168,8 @@ export class ObstacleView implements BaseView {
 			gameObject.once("pointerup", () => {
 				onAnimTrashDrown.once(Phaser.Animations.Events.ANIMATION_START, () => {
 					gameObject.setVelocityY(0);
+					gameObject.disableBody(true, false);
+					gameObject.setActive(true);
 				});
 				gameObject.play(Animations.obstacle_trashes_drown.key);
 				this.event.emit(EventNames.onPlaySFX, Assets.obstacle_trashes.key);
@@ -219,8 +223,8 @@ export class ObstacleView implements BaseView {
 	}
 
 	private initAdaptiveSpeedRelative (): void {
-		const faster: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 35, speed: -15 };
-		const stay: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 50, speed: 0};
+		const faster: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 40, speed: -15 };
+		const stay: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 45, speed: 0};
 		const slower: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 15, speed: 5 };
 		const chances = [faster, stay, slower];
 
@@ -297,6 +301,9 @@ export class ObstacleView implements BaseView {
 			}
 			this.spawnObstacle(displayPercentage, assetType);
 		});
+
+		// Make obstacles collider each other
+		this._scene.physics.add.collider(this._obstacleGroup, this._obstacleGroup);
 	}
 
 }
