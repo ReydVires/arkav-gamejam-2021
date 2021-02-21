@@ -17,6 +17,16 @@ export const Audios = {
 		url: ['audio/sfx/sfx_destroy_obstacle_rockes.mp3'],
 		type: AssetType.AUDIO
 	},
+	sfx_destroy_obstacle_rockes_1: {
+		key: 'sfx_destroy_obstacle_rockes_1',
+		url: ['audio/sfx/sfx_destroy_obstacle_rockes_1.mp3'],
+		type: AssetType.AUDIO
+	},
+	sfx_destroy_obstacle_rockes_2: {
+		key: 'sfx_destroy_obstacle_rockes_2',
+		url: ['audio/sfx/sfx_destroy_obstacle_rockes_2.mp3'],
+		type: AssetType.AUDIO
+	},
 	sfx_destroy_obstacle_trashes: {
 		key: 'sfx_destroy_obstacle_trashes',
 		url: ['audio/sfx/sfx_destroy_obstacle_trashes.mp3'],

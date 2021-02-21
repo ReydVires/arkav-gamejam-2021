@@ -110,6 +110,7 @@ export class ObstacleView implements BaseView {
 					return;
 				}
 				gameObject.setData(dataProps.counter, prevCounter);
+				this.event.emit(EventNames.onPlaySFX, Assets.obstacle_rockes.key + "_" + prevCounter);
 
 				const animIndex = prevCounter - 1;
 				const animDestroyRockes = animData[animIndex] as CustomTypes.Asset.AnimationInfoType;
