@@ -78,6 +78,8 @@ export class ObstacleView implements BaseView {
 		const assetType = gameObject.getData(DataProps.assetType) as string;
 		switch (assetType) {
 		case Assets.obstacle_rockes.key:
+			gameObject.setData(dataProps.counter, 0); // Reset tap counter
+
 			const animationRockes = Animations.obstacle_rockes as CustomTypes.Asset.AnimationInfoType;
 			AnimationHelper.AddAnimation(this._scene, animationRockes);
 			gameObject.play(animationRockes.key);
@@ -100,7 +102,6 @@ export class ObstacleView implements BaseView {
 				const tapToDestroy = 3;
 				if (++prevCounter >= tapToDestroy) {
 					gameObject.disableInteractive();
-					gameObject.setData(dataProps.counter, 0); // Reset tap counter
 					this.event.emit(EventNames.onPlaySFX, Assets.obstacle_rockes.key);
 
 					onAnimRockDestroy.once(Phaser.Animations.Events.ANIMATION_START, () => {
