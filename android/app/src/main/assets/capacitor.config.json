@@ -1,0 +1,13 @@
+{
+  "appId": "com.psychoverse.rakajourney",
+  "appName": "raka-journey",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {}
+}
