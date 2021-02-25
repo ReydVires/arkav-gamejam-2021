@@ -1,6 +1,6 @@
 {
   "appId": "com.psychoverse.rakajourney",
-  "appName": "raka-journey",
+  "appName": "Raka Journey",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "dist",
