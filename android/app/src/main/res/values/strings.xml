@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">raka-journey</string>
-    <string name="title_activity_main">raka-journey</string>
+    <string name="app_name">Raka Journey</string>
+    <string name="title_activity_main">Raka Journey</string>
     <string name="package_name">com.psychoverse.rakajourney</string>
     <string name="custom_url_scheme">com.psychoverse.rakajourney</string>
 </resources>
