@@ -2,12 +2,14 @@
 
 import "phaser";
 import '../src/css/index.css';
+import { Plugins } from "@capacitor/core";
 import { CONFIG } from './ts/info/GameInfo';
 import { SceneList } from "./ts/info/SceneInfo";
 import { ToastPlugin } from './ts/modules/plugin/ToastPlugin';
 
 // eslint-disable-next-line no-console
 if (CONFIG.ENABLE_LOG) console.log("[CONFIG]", CONFIG);
+const { KeepAwake } = Plugins;
 
 const renderType = (): number => {
 	const isFirefox = /Firefox/i.test(navigator.userAgent);
@@ -120,3 +122,5 @@ window.addEventListener("load", () => {
 		game.scale.setZoom(actualZoom);
 	});
 });
+
+KeepAwake?.keepAwake();
