@@ -24,10 +24,11 @@ export class GameplaySceneView implements BaseView {
 	screenUtility: ScreenUtilController;
 
 	private _displayPercentage: number;
-	private _uiTitleScreen: Phaser.GameObjects.Container;
+	private _titleScreenUI: Phaser.GameObjects.Container;
 	private _restartKey: Phaser.Input.Keyboard.Key;
 	private _muteKey: Phaser.Input.Keyboard.Key;
 	private _scoreUIText: Text;
+	private _scoreUI: Phaser.GameObjects.Container;
 	private _scoreResultText: Text;
 	private _scoreBestText: Text;
 	private _gameOverPanel: Phaser.GameObjects.Container;
@@ -64,8 +65,8 @@ export class GameplaySceneView implements BaseView {
 		});
 		this._scoreUIText.gameObject.setOrigin(0.5);
 
-		const container = this._scene.add.container().setDepth(UI_LAYER);
-		container.add([scoreHolder.gameObject, this._scoreUIText.gameObject]);
+		this._scoreUI = this._scene.add.container().setDepth(UI_LAYER);
+		this._scoreUI.add([scoreHolder.gameObject, this._scoreUIText.gameObject]);
 	}
 
 	private createGameOverUI (): void {
@@ -175,13 +176,13 @@ export class GameplaySceneView implements BaseView {
 
 		const playBtnEffect = this.setEffect(playBtn.gameObject, () => {
 			this._scene.tweens.add({
-				targets: this._uiTitleScreen,
+				targets: this._titleScreenUI,
 				props: {
-					x: { getEnd: () => -this._uiTitleScreen.displayWidth * 2 },
+					x: { getEnd: () => -this._titleScreenUI.displayWidth * 2 },
 				},
 				ease: Phaser.Math.Easing.Quintic.InOut,
 				duration: 250,
-				onComplete: () => this._uiTitleScreen.setVisible(false)
+				onComplete: () => this._titleScreenUI.setVisible(false).setActive(false)
 			});
 		});
 		playBtn.gameObject.setInteractive({useHandCursor: true}).on("pointerdown", () => {
@@ -190,9 +191,9 @@ export class GameplaySceneView implements BaseView {
 			playBtnEffect.play();
 		});
 
-		this._uiTitleScreen = this._scene.add.container().setDepth(UI_LAYER);
-		this._uiTitleScreen.setSize(width, height);
-		this._uiTitleScreen.add([
+		this._titleScreenUI = this._scene.add.container().setDepth(UI_LAYER);
+		this._titleScreenUI.setSize(width, height);
+		this._titleScreenUI.add([
 			logo.gameObject,
 			startBtn.gameObject,
 			creditText.gameObject,
@@ -235,14 +236,14 @@ export class GameplaySceneView implements BaseView {
 
 	hideTitleScreen (isImmediate?: boolean): void {
 		if (isImmediate) {
-			this._uiTitleScreen.setVisible(false);
+			this._titleScreenUI.setVisible(false);
 			return;
 		}
 
 		const tweenEffect = this._scene.tweens.create({
-			targets: this._uiTitleScreen,
+			targets: this._titleScreenUI,
 			props: {
-				x: { getStart: () => 0, getEnd: () => -this._uiTitleScreen.displayWidth },
+				x: { getStart: () => 0, getEnd: () => -this._titleScreenUI.displayWidth },
 			},
 			ease: Phaser.Math.Easing.Quintic.InOut,
 			duration: 500,
@@ -253,7 +254,10 @@ export class GameplaySceneView implements BaseView {
 	showGameOverPanel (): void {
 		const { height } = this.screenUtility;
 		const panelEffect = this._scene.tweens.create({
-			onStart: () => this._gameOverPanel.setVisible(true),
+			onStart: () => {
+				this._scoreUI.setVisible(false).setActive(false);
+				this._gameOverPanel.setVisible(true);
+			},
 			targets: this._gameOverPanel,
 			props: {
 				y: { getStart: () => -height, getEnd: () => 0 }
