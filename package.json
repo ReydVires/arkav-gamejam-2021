@@ -13,6 +13,7 @@
     "build": "webpack --config webpack/webpack.prod.js --env.build=game-prod",
     "build:dev": "webpack --config webpack/webpack.prod.js --env.build=game-dev",
     "build:stag": "webpack --config webpack/webpack.prod.js --env.build=game-stag",
+    "build:android": "npx cap copy && npx cap open android",
     "dist": "http-server dist -p 5051 -e -o -c120",
     "clean": "rmdir /Q /S dist",
     "lint": "eslint . --ext .ts",

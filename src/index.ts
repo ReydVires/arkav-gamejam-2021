@@ -1,5 +1,6 @@
 /// <reference path="../node_modules/phaser/types/phaser.d.ts" />
 
+import "phaser";
 import '../src/css/index.css';
 import { CONFIG } from './ts/info/GameInfo';
 import { SceneList } from "./ts/info/SceneInfo";
