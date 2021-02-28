@@ -3,7 +3,7 @@ import { Sprite } from "../../../modules/gameobjects/Sprite";
 import { ScreenUtilController } from "../../../modules/screenutility/ScreenUtilController";
 
 type CameraGroup = {
-	key: string,
+	key: CameraKeyList,
 	camera: Phaser.Cameras.Scene2D.Camera,
 	group: Phaser.GameObjects.Group
 };
