@@ -6,6 +6,8 @@ import { BaseView } from "../../../modules/core/BaseView";
 import { ArcadeSprite } from "../../../modules/gameobjects/ArcadeSprite";
 import { ScreenUtilController } from "../../../modules/screenutility/ScreenUtilController";
 
+const OBSTACLE_DEPTH = 25;
+
 export const enum DataProps {
 	deactiveThreshold = "deactiveThreshold",
 	displayPercentage = "displayPercentage",
@@ -208,6 +210,7 @@ export class ObstacleView implements BaseView {
 	private reuseObstacle (gameObject: Phaser.Physics.Arcade.Sprite): void {
 		gameObject.setActive(true);
 		gameObject.enableBody(false, 0, 0, true, true);
+		gameObject.setDepth(OBSTACLE_DEPTH); // Refresh depth
 
 		const [left, right, top, bottom] = this._backgroundEdges;
 		gameObject.setPosition(
@@ -287,7 +290,7 @@ export class ObstacleView implements BaseView {
 	}
 
 	create (displayPercentage: number, edges: number[]): void {
-		this._obstacleGroup = this._scene.physics.add.group();
+		this._obstacleGroup = this._scene.physics.add.group().setDepth(OBSTACLE_DEPTH);
 		this._backgroundEdges = edges;
 		this.createParticleEmitter();
 		this.initAdaptiveSpeedRelative();
