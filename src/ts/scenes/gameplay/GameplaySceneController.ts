@@ -78,6 +78,11 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.gameController.setHighscore(score);
 		});
 
+		this.bgController.onUpdateSpeedResistance(() => {
+			if (this.gameController.state !== GameState.PLAYING) return;
+			this.bgController.updateSpeedResistance();
+		});
+
 		this.playerController.registerOverlap(
 			this.obstacleController.obstacles(),
 			(player, obstacle) => {
