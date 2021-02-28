@@ -1,6 +1,6 @@
 import { DataProps, EventNames, ObstacleView } from "./ObstacleView";
 
-type OnPlaySFX = (type: string) => void;
+type OnPlaySFX = (type: string) => void
 
 export class ObstacleController {
 

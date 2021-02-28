@@ -18,11 +18,18 @@ const enum DataProps {
 	fadeOutPropsEffect = "fadeOutPropsEffect",
 }
 
+const enum EventNames {
+	onCreateFinish = "onCreateFinish",
+}
+
+type OnCreateFinish = (gameObject: Phaser.GameObjects.GameObject) => void
+
 export class ToastPlugin extends Phaser.Plugins.BasePlugin {
 
 	private _scene: Phaser.Scene;
 	private _textureKey: string;
 	private _containers: Phaser.Toast.GameObjectTarget[];
+	private _event = new Phaser.Events.EventEmitter();
 
 	constructor (pluginManager: Phaser.Plugins.PluginManager) {
 		super(pluginManager);
@@ -188,6 +195,7 @@ export class ToastPlugin extends Phaser.Plugins.BasePlugin {
 	configure (scene: Phaser.Scene, textureInfo?: Partial<Phaser.Toast.TextureInfo>): void {
 		this._scene = scene;
 		this._containers = [];
+		this._event = new Phaser.Events.EventEmitter();
 		this.generateTextureKey();
 		this.generateTexture(textureInfo);
 	}
@@ -227,6 +235,11 @@ export class ToastPlugin extends Phaser.Plugins.BasePlugin {
 		this.fadeIn(toastContainer);
 
 		this._containers.push(toastContainer);
+		this._event.emit(EventNames.onCreateFinish, this._containers);
+	}
+
+	registerOnCreateFinish (events: OnCreateFinish): void {
+		this._event.on(EventNames.onCreateFinish, events);
 	}
 
 }

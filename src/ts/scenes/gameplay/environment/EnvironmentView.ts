@@ -17,8 +17,7 @@ export const enum DataProps {
 }
 
 export const enum EventNames {
-	onSpawn = "onSpawn",
-	onDeactive = "onDeactive",
+	onCreateFinish = "onCreateFinish",
 }
 
 export class EnvironmentView implements BaseView {
@@ -31,6 +30,7 @@ export class EnvironmentView implements BaseView {
 	};
 
 	private _environmentGroup: Phaser.GameObjects.Group;
+	private _displayPercentage: number;
 
 	constructor (private _scene: Phaser.Scene) {
 		this.screenUtility = ScreenUtilController.getInstance();
@@ -60,7 +60,7 @@ export class EnvironmentView implements BaseView {
 		return rotations[randomPick];
 	}
 
-	private spawnEnvironment (displayPercentage: number, sourceSideFomLeft: boolean): void {
+	private spawnEnvironment (sourceSideFomLeft: boolean): void {
 		const animBird = Animations.bird_silhouette as CustomTypes.Asset.AnimationInfoType;
 		AnimationHelper.AddAnimation(this._scene, animBird);
 
@@ -68,7 +68,7 @@ export class EnvironmentView implements BaseView {
 		const [birdSyncRotation, birdSyncSpeed] = this.rotation(sourceSideFomLeft);
 
 		const bird = new Sprite(this._scene, sourceSideFomLeft ? 0 : width, this.randomPosY, Assets.bird_silhouette.key);
-		bird.transform.setToScaleDisplaySize(displayPercentage * Phaser.Math.FloatBetween(0.5, 0.8));
+		bird.transform.setToScaleDisplaySize(this._displayPercentage * Phaser.Math.FloatBetween(0.5, 0.8));
 		bird.gameObject.x += bird.transform.displayWidth / 2 * (sourceSideFomLeft ? -1 : 1) ;
 		bird.gameObject.setAlpha(0.65);
 		bird.gameObject.setRotation(birdSyncRotation);
@@ -80,7 +80,7 @@ export class EnvironmentView implements BaseView {
 			(bird.transform.displayWidth / 2) * (sourceSideFomLeft ? -1 : 1),
 			sourceSideFomLeft ? width : -(bird.transform.displayWidth / 2)
 		]);
-		bird.gameObject.setData(DataProps.speed, (32 * displayPercentage) * (sourceSideFomLeft ? 1 : -1));
+		bird.gameObject.setData(DataProps.speed, (32 * this._displayPercentage) * (sourceSideFomLeft ? 1 : -1));
 		bird.gameObject.setData(DataProps.syncSpeedY, birdSyncSpeed);
 
 		bird.gameObject.play(animBird.key);
@@ -100,21 +100,23 @@ export class EnvironmentView implements BaseView {
 	}
 
 	create (displayPercentage: number): void {
+		this._displayPercentage = displayPercentage;
 		this._environmentGroup = this._scene.add.group().setDepth(ENV_DEPTH);
+	}
 
-		this.event.on(EventNames.onSpawn, (side: boolean) => {
-			const envObject = this._environmentGroup.getChildren()
-				.find((envObject) => !envObject.active && (envObject.getData(DataProps.sourceSide) === side));
-			if (envObject) {
-				this.reuseEnvironment(envObject as Phaser.GameObjects.Sprite);
-				return;
-			}
-			this.spawnEnvironment(displayPercentage, side);
-		});
+	spawn (side: boolean): void {
+		const envObject = this._environmentGroup.getChildren()
+			.find((envObject) => !envObject.active && (envObject.getData(DataProps.sourceSide) === side));
+		if (envObject) {
+			this.reuseEnvironment(envObject as Phaser.GameObjects.Sprite);
+			return;
+		}
+		this.spawnEnvironment(side);
+		this.event.emit(EventNames.onCreateFinish, this._environmentGroup);
+	}
 
-		this.event.on(EventNames.onDeactive, (gameObject: Phaser.GameObjects.Sprite) => {
-			gameObject.setActive(false).setVisible(false);
-		});
+	deactiveObject (gameObject: Phaser.GameObjects.Sprite): void {
+		gameObject.setActive(false).setVisible(false);
 	}
 
 }
