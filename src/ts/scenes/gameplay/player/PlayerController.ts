@@ -1,6 +1,7 @@
 import { EventNames, PlayerView } from "./PlayerView";
 
-type OnDamaged = (life: number) => void;
+type OnDamaged = (life: number) => void
+type OnCreateFinish = (gameObject: Phaser.Physics.Arcade.Sprite) => void
 
 export class PlayerController {
 
@@ -41,6 +42,10 @@ export class PlayerController {
 
 	onDead (events: Function): void {
 		this._view.event.once(EventNames.onDead, events);
+	}
+
+	onCreateFinish (events: OnCreateFinish): void {
+		this._view.event.once(EventNames.onCreateFinish, events);
 	}
 
 }

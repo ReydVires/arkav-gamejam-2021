@@ -13,6 +13,5 @@ export const enum GameState {
 
 export const enum CameraKeyList {
 	MAIN = 'main',
-	BACKGROUND = 'bg',
 	UI = 'ui',
 };

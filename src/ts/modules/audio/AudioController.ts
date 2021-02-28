@@ -33,13 +33,12 @@ export class AudioController {
 	}
 
 	private registerVisibilityChangeEvent (): void {
-		document.addEventListener("visibilitychange", () => {
-			if (document.visibilityState === "visible") {
-				if (this._enableAudio) this.unmute();
-			}
-			if (!document.hidden) return;
+		this._scene.game.events.on("hidden", () => {
 			this.pauseBGM();
-		});
+		}, this);
+		this._scene.game.events.on("visible", () => {
+			if (this._enableAudio) this.unmute();
+		}, this);
 	}
 
 	playBGM (key: string, restart: boolean = true, config?: Phaser.Types.Sound.SoundConfig): void {

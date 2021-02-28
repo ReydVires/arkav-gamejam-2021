@@ -6,13 +6,13 @@ import { BaseView } from "../../../modules/core/BaseView";
 import { ArcadeSprite } from "../../../modules/gameobjects/ArcadeSprite";
 import { ScreenUtilController } from "../../../modules/screenutility/ScreenUtilController";
 
-const PLAYER_LAYER = 20;
+const PLAYER_DEPTH = 20;
 
 export const enum EventNames {
 	onCreateFinish = "onCreateFinish",
 	onDamaged = "onDamaged",
 	onDead = "onDead",
-};
+}
 
 export class PlayerView implements BaseView {
 
@@ -44,13 +44,14 @@ export class PlayerView implements BaseView {
 		this._sprite = new ArcadeSprite(this._scene, 0, 0, Assets.player_raft_ride.key);
 		this._sprite.transform.setToScaleDisplaySize(displayPercentage * 2);
 		this._sprite.gameObject.setPosition(centerX, top + this._sprite.transform.displayHeight + (height * 0.175));
-		this._sprite.gameObject.setDepth(PLAYER_LAYER);
+		this._sprite.gameObject.setDepth(PLAYER_DEPTH);
 
 		const animInfoType = Animations.player_raft_ride as CustomTypes.Asset.AnimationInfoType;
 		AnimationHelper.AddAnimation(this._scene, animInfoType);
 		this._sprite.gameObject.play(animInfoType.key);
 
 		this.initMoveComponent();
+		this.event.emit(EventNames.onCreateFinish, this._sprite.gameObject);
 	}
 
 	private initMoveComponent (): void {
@@ -60,6 +61,9 @@ export class PlayerView implements BaseView {
 			this._sprite.gameObject.getCenter().x,
 			this._sprite.gameObject.getRightCenter().x,
 		];
+		// Unlock this for the uncertain difficulties
+		// this._moveArea.unshift(this._sprite.gameObject.getLeftCenter().x * 0.85);
+		// this._moveArea.push(this._sprite.gameObject.getRightCenter().x * 1.15);
 	}
 
 	movePlayerRandom (): void {
