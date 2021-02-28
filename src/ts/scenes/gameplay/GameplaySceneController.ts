@@ -59,6 +59,9 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.bgController.displayPercentage(),
 			this.bgController.getEdge()
 		);
+		this.obstacleController.onCreateFinish((go) => {
+			this.cameraController.registerGameobjectInCamera(go, CameraKeyList.MAIN);
+		});
 		this.obstacleController.init(
 			this.bgController.displayPercentage(),
 			this.bgController.getEdge()
