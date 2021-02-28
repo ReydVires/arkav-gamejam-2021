@@ -19,6 +19,7 @@ export const enum EventNames {
 	onSpawn = "onSpawn",
 	onTap = "onTap",
 	onPlaySFX = "onPlaySFX",
+	onCreateFinish = "onCreateFinish",
 }
 
 export class ObstacleView implements BaseView {
@@ -205,6 +206,7 @@ export class ObstacleView implements BaseView {
 		obstacle.gameObject.setVelocityY(SPEED_RELATIVE * displayPercentage);
 
 		this.setInteractive(obstacle.gameObject);
+		this.event.emit(EventNames.onCreateFinish, obstacle.gameObject);
 	}
 
 	private reuseObstacle (gameObject: Phaser.Physics.Arcade.Sprite): void {

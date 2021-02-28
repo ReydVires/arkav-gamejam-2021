@@ -1,6 +1,7 @@
 import { DataProps, EventNames, ObstacleView } from "./ObstacleView";
 
 type OnPlaySFX = (type: string) => void
+type OnCreateFinish = (gameObject: Phaser.GameObjects.GameObject) => void
 
 export class ObstacleController {
 
@@ -49,6 +50,10 @@ export class ObstacleController {
 
 	onPlaySFX (events: OnPlaySFX): void {
 		this._view.event.on(EventNames.onPlaySFX, events);
+	}
+
+	onCreateFinish (events: OnCreateFinish): void {
+		this._view.event.on(EventNames.onCreateFinish, events);
 	}
 
 }
