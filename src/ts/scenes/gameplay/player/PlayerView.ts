@@ -61,6 +61,9 @@ export class PlayerView implements BaseView {
 			this._sprite.gameObject.getCenter().x,
 			this._sprite.gameObject.getRightCenter().x,
 		];
+		// Unlock this for the uncertain difficulties
+		// this._moveArea.unshift(this._sprite.gameObject.getLeftCenter().x * 0.85);
+		// this._moveArea.push(this._sprite.gameObject.getRightCenter().x * 1.15);
 	}
 
 	movePlayerRandom (): void {
