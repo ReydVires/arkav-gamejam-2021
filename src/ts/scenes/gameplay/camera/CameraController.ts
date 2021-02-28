@@ -1,11 +1,14 @@
+import { CustomTypes } from "../../../../types/custom";
 import { CameraKeyList } from "../../../info/GameInfo";
 import { Sprite } from "../../../modules/gameobjects/Sprite";
 import { ScreenUtilController } from "../../../modules/screenutility/ScreenUtilController";
 
+type GameObjects = Phaser.GameObjects.GameObject | Phaser.GameObjects.Group | Phaser.GameObjects.GameObject[]
+
 type CameraGroup = {
 	key: CameraKeyList,
 	camera: Phaser.Cameras.Scene2D.Camera,
-	group: Phaser.GameObjects.Group
+	group: CustomTypes.General.KeyValuePair<CameraKeyList, GameObjects[]>
 };
 
 type CameraObjectResultData = {
@@ -17,7 +20,6 @@ export class CameraController {
 
 	private _screenUtility: ScreenUtilController;
 	private _cameraGroup: CameraGroup[];
-	private _backgroundCamera: Phaser.Cameras.Scene2D.Camera;
 	private _uiCamera: Phaser.Cameras.Scene2D.Camera;
 
 	constructor (private _scene: Phaser.Scene) {
@@ -26,29 +28,17 @@ export class CameraController {
 	}
 
 	init (): void {
-		const mainGroup = this._scene.add.group().setName(CameraKeyList.MAIN);
 		this._cameraGroup.push({
 			key: CameraKeyList.MAIN,
 			camera: this._scene.cameras.main,
-			group: mainGroup
+			group: { key: CameraKeyList.MAIN, value: [] }
 		});
 
-		const bgGroup = this._scene.add.group();
-		this._backgroundCamera = this._scene.cameras.add().setName(CameraKeyList.BACKGROUND);
-		this._cameraGroup.push({
-			key: CameraKeyList.BACKGROUND,
-			camera: this._backgroundCamera,
-			group: bgGroup
-		});
-
-		this._scene.cameras.cameras.reverse(); // Adjust camera order on array
-
-		const uiGroup = this._scene.add.group();
-		this._uiCamera = this._scene.cameras.add().setName(CameraKeyList.UI);
+		this._uiCamera = this._scene.cameras.add();
 		this._cameraGroup.push({
 			key: CameraKeyList.UI,
 			camera: this._uiCamera,
-			group: uiGroup
+			group: { key: CameraKeyList.UI, value: [] }
 		});
 	}
 
@@ -60,14 +50,14 @@ export class CameraController {
 		return this._uiCamera;
 	}
 
-	registerGameobjectInCamera (gameObject: Phaser.GameObjects.GameObject, key = CameraKeyList.MAIN): void {
+	registerGameobjectInCamera (gameObject: GameObjects, key = CameraKeyList.MAIN): void {
 		for (let i = 0, len = this._cameraGroup.length; i < len; i++) {
 			const cg = this._cameraGroup[i];
 			if (cg.key != key) {
 				cg.camera.ignore(gameObject);
 				continue;
 			}
-			cg.group.add(gameObject);
+			cg.group.value.push(gameObject);
 		}
 	}
 
