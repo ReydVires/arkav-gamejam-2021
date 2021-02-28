@@ -1,4 +1,6 @@
-import { BackgroundView } from "./BackgroundView";
+import { BackgroundView, EventNames } from "./BackgroundView";
+
+type OnCreateFinish = (gameObjects: Phaser.GameObjects.Image[]) => void
 
 export class BackgroundController {
 
@@ -29,6 +31,10 @@ export class BackgroundController {
 				riverBg.gameObject.y += (riverBg.gameObject.displayHeight * 2);
 			}
 		});
+	}
+
+	onCreateFinish (events: OnCreateFinish): void {
+		this._view.event.once(EventNames.onCreateFinish, events);
 	}
 
 }

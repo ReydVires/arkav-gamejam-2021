@@ -4,6 +4,10 @@ import { Image } from "../../../modules/gameobjects/Image";
 import { Rectangle } from "../../../modules/gameobjects/Rectangle";
 import { ScreenUtilController } from "../../../modules/screenutility/ScreenUtilController";
 
+export const enum EventNames {
+	onCreateFinish = "onCreateFinish",
+}
+
 export class BackgroundView implements BaseView {
 
 	event: Phaser.Events.EventEmitter;
@@ -88,6 +92,9 @@ export class BackgroundView implements BaseView {
 
 		this.createRiverBackground();
 		this.createRiverside();
+
+		const bgGameObjects = this._backgrounds.map((img) => img.gameObject);
+		this.event.emit(EventNames.onCreateFinish, [this._sprite.gameObject, ...bgGameObjects]);
 	}
 
 }
