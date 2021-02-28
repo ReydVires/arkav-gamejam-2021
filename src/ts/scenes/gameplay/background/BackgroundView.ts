@@ -4,10 +4,19 @@ import { Image } from "../../../modules/gameobjects/Image";
 import { Rectangle } from "../../../modules/gameobjects/Rectangle";
 import { ScreenUtilController } from "../../../modules/screenutility/ScreenUtilController";
 
+export const enum EventNames {
+	onUpdateSpeedResistance = "onUpdateSpeedResistance",
+	onCreateFinish = "onCreateFinish",
+}
+
 export class BackgroundView implements BaseView {
 
 	event: Phaser.Events.EventEmitter;
 	screenUtility: ScreenUtilController;
+
+	props = {
+		speedResistance: 3,
+	}
 
 	private _sprite: Rectangle;
 	private _backgrounds: Image[];
@@ -38,6 +47,10 @@ export class BackgroundView implements BaseView {
 
 	get thresholdPooling (): number {
 		return this.screenUtility.height;
+	}
+
+	get maxSpeedResistanceThreshold (): number {
+		return 1.2;
 	}
 
 	private createRiverBackground (): void {
@@ -88,6 +101,9 @@ export class BackgroundView implements BaseView {
 
 		this.createRiverBackground();
 		this.createRiverside();
+
+		const bgGameObjects = this._backgrounds.map((img) => img.gameObject);
+		this.event.emit(EventNames.onCreateFinish, [this._sprite.gameObject, ...bgGameObjects]);
 	}
 
 }

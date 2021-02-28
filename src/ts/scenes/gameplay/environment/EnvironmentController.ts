@@ -1,5 +1,7 @@
 import { DataProps, EnvironmentView, EventNames } from "./EnvironmentView";
 
+type OnCreateFinish = (gameObjects: Phaser.GameObjects.Group) => void
+
 export class EnvironmentController {
 
 	private _view: EnvironmentView;
@@ -17,7 +19,7 @@ export class EnvironmentController {
 	}
 
 	private getSpawnChance (): boolean {
-		return Math.random() <= 0.5;
+		return Math.random() <= 0.45;
 	}
 
 	update (time: number, dt: number): void {
@@ -34,7 +36,7 @@ export class EnvironmentController {
 	
 				const posX = envGameObject.x + offsetX;
 				if (fromLeft ? (posX >= threshold) : (posX <= threshold) ) {
-					this._view.event.emit(EventNames.onDeactive, envGameObject);
+					this._view.deactiveObject(envGameObject);
 				}
 			}
 		});
@@ -42,9 +44,14 @@ export class EnvironmentController {
 		this._view.props.timeToSpawn -= dt * 0.25;
 		if (this._view.props.timeToSpawn <= 0) {
 			if (!this.getSpawnChance()) return;
-			this._view.event.emit(EventNames.onSpawn, this.getSpawnChance());
+
+			this._view.spawn(this.getSpawnChance());
 			this.resetTimeToSpawn();
 		}
+	}
+
+	onCreateFinish (events: OnCreateFinish): void {
+		this._view.event.on(EventNames.onCreateFinish, events);
 	}
 
 }

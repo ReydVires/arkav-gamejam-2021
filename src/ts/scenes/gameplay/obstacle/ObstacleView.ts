@@ -6,6 +6,8 @@ import { BaseView } from "../../../modules/core/BaseView";
 import { ArcadeSprite } from "../../../modules/gameobjects/ArcadeSprite";
 import { ScreenUtilController } from "../../../modules/screenutility/ScreenUtilController";
 
+const OBSTACLE_DEPTH = 25;
+
 export const enum DataProps {
 	deactiveThreshold = "deactiveThreshold",
 	displayPercentage = "displayPercentage",
@@ -208,6 +210,7 @@ export class ObstacleView implements BaseView {
 	private reuseObstacle (gameObject: Phaser.Physics.Arcade.Sprite): void {
 		gameObject.setActive(true);
 		gameObject.enableBody(false, 0, 0, true, true);
+		gameObject.setDepth(OBSTACLE_DEPTH); // Refresh depth
 
 		const [left, right, top, bottom] = this._backgroundEdges;
 		gameObject.setPosition(
@@ -230,17 +233,16 @@ export class ObstacleView implements BaseView {
 		const chances = [faster, stay, slower];
 
 		const chanceTotal = chances.reduce((val, acc) => {
-			const reducer = { chance: val.chance + acc.chance, speed: 0 };
+			const reducer = { chance: val.chance + acc.chance, speed: 0 } as CustomTypes.Gameplay.Obstacle.SpeedChanceType;
 			return reducer;
 		}).chance;
 
 		this._chanceUpdateSpeedRelatives = chances.map((chanceSpeed, idx) => {
-			if (idx === 0) {
-				chanceSpeed.chance /= chanceTotal;
-				return chanceSpeed;
-			}
+			chanceSpeed.chance /= chanceTotal;
+			if (idx === 0) return chanceSpeed;
 
-			chanceSpeed.chance = (chanceSpeed.chance / chanceTotal) + chances[idx-1].chance;
+			const prevIdx = idx-1;
+			chanceSpeed.chance += chances[prevIdx].chance;
 			return chanceSpeed;
 		});
 	}
@@ -288,7 +290,7 @@ export class ObstacleView implements BaseView {
 	}
 
 	create (displayPercentage: number, edges: number[]): void {
-		this._obstacleGroup = this._scene.physics.add.group();
+		this._obstacleGroup = this._scene.physics.add.group().setDepth(OBSTACLE_DEPTH);
 		this._backgroundEdges = edges;
 		this.createParticleEmitter();
 		this.initAdaptiveSpeedRelative();

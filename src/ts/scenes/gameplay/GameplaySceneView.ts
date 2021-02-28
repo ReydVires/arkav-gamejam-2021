@@ -7,7 +7,7 @@ import { Rectangle } from "../../modules/gameobjects/Rectangle";
 import { Text } from "../../modules/gameobjects/Text";
 import { ScreenUtilController } from "../../modules/screenutility/ScreenUtilController";
 
-const UI_LAYER = 50;
+const UI_DEPTH = 50;
 
 export const enum EventNames {
 	onPlaySFXClick = "onPlaySFXClick",
@@ -16,7 +16,7 @@ export const enum EventNames {
 	onClickMute = "onClickMute",
 	onClickRestart = "onClickRestart",
 	onCreateFinish = "onCreateFinish",
-};
+}
 
 export class GameplaySceneView implements BaseView {
 
@@ -65,15 +65,16 @@ export class GameplaySceneView implements BaseView {
 		});
 		this._scoreUIText.gameObject.setOrigin(0.5);
 
-		this._scoreUI = this._scene.add.container().setDepth(UI_LAYER);
+		this._scoreUI = this._scene.add.container().setDepth(UI_DEPTH);
 		this._scoreUI.add([scoreHolder.gameObject, this._scoreUIText.gameObject]);
+		this._scoreUI.setVisible(false);
 	}
 
 	private createGameOverUI (): void {
 		const { centerX, centerY, width, height } = this.screenUtility;
 
 		this._overlayPanel = new Rectangle(this._scene, centerX, centerY, width, height, 0x2c3e50);
-		this._overlayPanel.gameObject.setInteractive().setDepth(UI_LAYER);
+		this._overlayPanel.gameObject.setInteractive().setDepth(UI_DEPTH);
 		this._overlayPanel.gameObject.setAlpha(0.35).setVisible(false);
 
 		const gameOverPanel = new Image(this._scene, centerX, centerY * 0.875, Assets.panel_game_over.key);
@@ -121,7 +122,7 @@ export class GameplaySceneView implements BaseView {
 			homeBtnEffect.play();
 		});
 
-		this._gameOverPanel = this._scene.add.container().setDepth(UI_LAYER);
+		this._gameOverPanel = this._scene.add.container().setDepth(UI_DEPTH);
 		this._gameOverPanel.add([
 			gameOverPanel.gameObject,
 			this._scoreResultText.gameObject,
@@ -191,7 +192,7 @@ export class GameplaySceneView implements BaseView {
 			playBtnEffect.play();
 		});
 
-		this._titleScreenUI = this._scene.add.container().setDepth(UI_LAYER);
+		this._titleScreenUI = this._scene.add.container().setDepth(UI_DEPTH);
 		this._titleScreenUI.setSize(width, height);
 		this._titleScreenUI.add([
 			logo.gameObject,
@@ -215,14 +216,14 @@ export class GameplaySceneView implements BaseView {
 		});
 	}
 
-	createDebugLinePointer (): void {
-		if (!CONFIG.ENABLE_LOG) return;
+	createDebugLinePointer (): Phaser.GameObjects.Graphics {
 		const debugLine = this._scene.add.graphics().setDepth(100);
 		this._scene.input.on("pointerdown", (p: Phaser.Input.Pointer) => {
 			debugLine.clear().lineStyle(1, 0x00ff00);
 			debugLine.lineBetween(0, p.y, this.screenUtility.width, p.y);
 			debugLine.lineBetween(p.x, 0, p.x, this.screenUtility.height);
 		});
+		return (CONFIG.ENABLE_LOG) ? debugLine : debugLine.setActive(false).setVisible(false);
 	}
 
 	setHighscore (score: string): void {
@@ -251,6 +252,10 @@ export class GameplaySceneView implements BaseView {
 		tweenEffect.play();
 	}
 
+	showScoreUI (): void {
+		this._scoreUI.setVisible(true);
+	}
+
 	showGameOverPanel (): void {
 		const { height } = this.screenUtility;
 		const panelEffect = this._scene.tweens.create({
@@ -277,9 +282,15 @@ export class GameplaySceneView implements BaseView {
 		this.createScoreText();
 		this.createTitleUI();
 		this.createGameOverUI();
-		this.event.emit(EventNames.onCreateFinish);
+		const debugPointerLine = this.createDebugLinePointer();
 
-		this.createDebugLinePointer();
+		this.event.emit(EventNames.onCreateFinish, [
+			this._gameOverPanel,
+			this._titleScreenUI,
+			this._scoreUI,
+			this._overlayPanel.gameObject,
+			debugPointerLine
+		]);
 	}
 
 }
