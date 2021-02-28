@@ -7,8 +7,9 @@ import { PlayerController } from "./player/PlayerController";
 import { BackgroundController } from "./background/BackgroundController";
 import { ObstacleController } from "./obstacle/ObstacleController";
 import { GameController } from "./game/GameController";
-import { CONFIG, GameState } from "../../info/GameInfo";
+import { CameraKeyList, CONFIG, GameState } from "../../info/GameInfo";
 import { EnvironmentController } from "./environment/EnvironmentController";
+import { CameraController } from "./camera/CameraController";
 
 type OnCreateFinish = (...args: unknown[]) => void;
 type SceneData = { isRetry?: boolean }
@@ -23,6 +24,7 @@ export class GameplaySceneController extends Phaser.Scene {
 	playerController: PlayerController;
 	obstacleController: ObstacleController;
 	environmentController: EnvironmentController;
+	cameraController: CameraController;
 
 	constructor () {
 		super({key: SceneInfo.GAMEPLAY.key});
@@ -31,6 +33,7 @@ export class GameplaySceneController extends Phaser.Scene {
 	init (sceneData: SceneData): void {
 		this.toast.configure(this);
 		this.view = new GameplaySceneView(this);
+		this.cameraController = new CameraController(this);
 		this.audioController = AudioController.getInstance();
 		this.debugController = new DebugController(this);
 		this.gameController = new GameController();
@@ -39,9 +42,19 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.obstacleController = new ObstacleController(this);
 		this.environmentController = new EnvironmentController(this);
 
+		this.cameraController.init();
+		this.toast.registerOnCreateFinish((go) => {
+			this.cameraController.registerGameobjectInCamera(go, CameraKeyList.UI);
+		});
 		this.debugController.init();
 		this.gameController.init();
+		this.bgController.onCreateFinish((go) => {
+			this.cameraController.registerGameobjectInCamera(go, CameraKeyList.MAIN);
+		});
 		this.bgController.init();
+		this.playerController.onCreateFinish((go) => {
+			this.cameraController.registerGameobjectInCamera(go, CameraKeyList.MAIN);
+		});
 		this.playerController.init(
 			this.bgController.displayPercentage(),
 			this.bgController.getEdge()
@@ -50,6 +63,9 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.bgController.displayPercentage(),
 			this.bgController.getEdge()
 		);
+		this.environmentController.onCreateFinish((go: Phaser.GameObjects.Group) => {
+			this.cameraController.registerGameobjectInCamera(go, CameraKeyList.MAIN);
+		});
 		this.environmentController.init(
 			this.bgController.displayPercentage()
 		);
@@ -105,13 +121,19 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.toast.show("Audio is " + (isMuted ? "mute" : "on"));
 		});
 
-		this.onCreateFinish(() => {
+		this.onCreateFinish((uiView: Phaser.GameObjects.GameObject[]) => {
 			this.playBGMWhenReady();
 			this.debugController.show(true);
-			if (!sceneData.isRetry) return;
 
-			this.view.hideTitleScreen(true);
-			this.startGame();
+			this.cameraController.mainCamera
+				.ignore(uiView)
+				.setZoom(1.6)
+				.pan(this.view.screenUtility.centerX, this.view.screenUtility.centerY * 0.7, 1);
+
+			if (sceneData.isRetry) {
+				this.view.hideTitleScreen(true);
+				this.time.delayedCall(200, () => this.startGame());
+			}
 		});
 	}
 
@@ -122,17 +144,24 @@ export class GameplaySceneController extends Phaser.Scene {
 	}
 
 	startGame (): void {
+		const cameraTarget = this.cameraController.mainCamera;
+		this.tweens.add({
+			targets: cameraTarget,
+			onStart: () => cameraTarget.pan(this.view.screenUtility.centerX, this.view.screenUtility.centerY, 750),
+			zoom: 1,
+			duration: 800,
+			onComplete: () => this.view.showScoreUI()
+		});
+
 		this.view.setHighscore(this.gameController.highscore.toString());
 		this.gameController.playState();
 	}
 
 	fadeOutRestart (isRetry?: boolean): void {
-		const cam = this.cameras.main;
-		cam.on(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-			this.scene.restart({ isRetry });
-		});
+		this.lockInput(true);
+		const cam = this.cameraController.uiCamera;
+		cam.on(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.restart({ isRetry }));
 		cam.fadeOut(350);
-		this.input.enabled = false;
 	}
 
 	playBGMWhenReady (): void {
@@ -144,6 +173,10 @@ export class GameplaySceneController extends Phaser.Scene {
 		this.sound.once(Phaser.Sound.Events.UNLOCKED, () => {
 			this.audioController.playBGM(Audios.bgm_title.key);
 		});
+	}
+
+	lockInput (lock: boolean): void {
+		this.input.enabled = !lock;
 	}
 
 	update (time: number, dt: number): void {
