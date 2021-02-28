@@ -11,7 +11,7 @@ import { CameraKeyList, CONFIG, GameState } from "../../info/GameInfo";
 import { EnvironmentController } from "./environment/EnvironmentController";
 import { CameraController } from "./camera/CameraController";
 
-type OnCreateFinish = (...args: unknown[]) => void;
+type OnCreateFinish = (gameObject: Phaser.GameObjects.GameObject[]) => void;
 type SceneData = { isRetry?: boolean }
 
 export class GameplaySceneController extends Phaser.Scene {
@@ -63,7 +63,7 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.bgController.displayPercentage(),
 			this.bgController.getEdge()
 		);
-		this.environmentController.onCreateFinish((go: Phaser.GameObjects.Group) => {
+		this.environmentController.onCreateFinish((go) => {
 			this.cameraController.registerGameobjectInCamera(go, CameraKeyList.MAIN);
 		});
 		this.environmentController.init(
@@ -121,12 +121,12 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.toast.show("Audio is " + (isMuted ? "mute" : "on"));
 		});
 
-		this.onCreateFinish((uiView: Phaser.GameObjects.GameObject[]) => {
+		this.onCreateFinish((uiView) => {
 			this.playBGMWhenReady();
 			this.debugController.show(true);
 
+			this.cameraController.registerGameobjectInCamera(uiView, CameraKeyList.UI);
 			this.cameraController.mainCamera
-				.ignore(uiView)
 				.setZoom(1.6)
 				.pan(this.view.screenUtility.centerX, this.view.screenUtility.centerY * 0.7, 1);
 

@@ -1,6 +1,6 @@
 import { DataProps, EnvironmentView, EventNames } from "./EnvironmentView";
 
-type OnCreateFinish = (gameObjects: unknown) => void
+type OnCreateFinish = (gameObjects: Phaser.GameObjects.Group) => void
 
 export class EnvironmentController {
 
