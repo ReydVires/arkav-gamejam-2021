@@ -62,6 +62,13 @@ export declare namespace CustomTypes {
                 chance: number,
                 speed: number
             }
+
+            interface Type {
+                texture: string,
+                speedRelative: number,
+                handleInteraction: Function
+            }
+
         }
 
     }

@@ -59,11 +59,11 @@ export class ObstacleView implements BaseView {
 			Assets.obstacle_trashes.key,
 		];
 		// TODO: Setup for futher development
-		// const obstacleTypes = [
+		// const obstacleTypes: CustomTypes.Gameplay.Obstacle.Type[] = [
 		// 	{
 		// 		texture: Assets.obstacle_rockes.key,
 		// 		speedRelative: 0,
-		// 		interaction: () => {},
+		// 		handleInteraction: () => {},
 		// 	},
 		// ];
 		const randomPick = Math.floor(Math.random() * assetKeys.length);
