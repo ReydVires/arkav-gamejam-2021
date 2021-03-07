@@ -171,9 +171,12 @@ export class ObstacleView implements BaseView {
 			});
 			gameObject.once("pointerup", () => {
 				onAnimTrashDrown.once(Phaser.Animations.Events.ANIMATION_START, () => {
-					gameObject.setVelocityY(0);
+					gameObject.body.checkCollision.none = true;
+					gameObject.setVelocityY(gameObject.body.velocity.y * 0.65); // Slower
+				});
+				onAnimTrashDrown.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
 					gameObject.disableBody(true, false);
-					gameObject.setActive(true);
+					gameObject.body.checkCollision.none = false;
 				});
 				gameObject.play(Animations.obstacle_trashes_drown.key);
 				this.event.emit(EventNames.onPlaySFX, Assets.obstacle_trashes.key);
@@ -192,6 +195,7 @@ export class ObstacleView implements BaseView {
 
 		const obstacle = new ArcadeSprite(this._scene, 0, 0, assetType, 0);
 		this._obstacleGroup.add(obstacle.gameObject);
+		obstacle.gameObject.setDepth(OBSTACLE_DEPTH);
 
 		obstacle.transform.setToScaleDisplaySize(displayPercentage);
 		obstacle.gameObject.setData(DataProps.assetType, assetType);
@@ -284,9 +288,10 @@ export class ObstacleView implements BaseView {
 	}
 
 	deactiveGameObject (gameObject: Phaser.Physics.Arcade.Sprite): void {
+		gameObject.setDepth(0);
 		gameObject.setVelocity(0).disableBody(true, true);
-		gameObject.removeAllListeners();
 		gameObject.setActive(false);
+		gameObject.removeAllListeners();
 	}
 
 	create (displayPercentage: number, edges: number[]): void {
