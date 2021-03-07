@@ -26,7 +26,7 @@ export class AudioController {
 			this._enableAudio = true;
 			this._isInitialize = true;
 
-			this._scene.sound.pauseOnBlur = false;
+			this._scene.sound.pauseOnBlur = true;
 			this.registerVisibilityChangeEvent();
 			resolve();
 		});
