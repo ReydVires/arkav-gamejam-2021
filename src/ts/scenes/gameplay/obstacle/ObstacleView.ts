@@ -147,7 +147,7 @@ export class ObstacleView implements BaseView {
 			});
 			gameObject.on("drag", (p: Phaser.Input.Pointer, dragX: number) => {
 				const deltaPosX = dragX - (gameObject.getData(dataProps.prevPosX) as number);
-				const calibratePosX = deltaPosX * 0.575; // 0 is easy to swipe, while 1 is hard to swipe
+				const calibratePosX = deltaPosX * (0.615); // 0 is easy to swipe, while 1 is hard to swipe
 				const getDragX = dragX - calibratePosX;
 
 				const [left, right] = this._backgroundEdges;
@@ -221,17 +221,17 @@ export class ObstacleView implements BaseView {
 		);
 
 		const displayPercentage = gameObject.getData(DataProps.displayPercentage) as number;
-		const speedRelative =  this.updateSpeedRelative(gameObject, (gameObject.getData(DataProps.speedRelative) as number));
-		
+		const speedRelative =  this.updateSpeedRelative(gameObject.getData(DataProps.speedRelative) as number);
+		gameObject.setData(DataProps.speedRelative, speedRelative);
 		gameObject.setVelocityY(speedRelative * displayPercentage);
 
 		this.setInteractive(gameObject);
 	}
 
 	private initAdaptiveSpeedRelative (): void {
-		const faster: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 40, speed: -15 };
-		const stay: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 45, speed: 0};
-		const slower: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 15, speed: 5 };
+		const faster: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 50, speed: -15 };
+		const stay: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 40, speed: 0};
+		const slower: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 10, speed: 5 };
 		const chances = [faster, stay, slower];
 
 		const chanceTotal = chances.reduce((val, acc) => {
@@ -249,12 +249,10 @@ export class ObstacleView implements BaseView {
 		});
 	}
 
-	private updateSpeedRelative (gameObject: Phaser.Physics.Arcade.Sprite, prevSpeedRelative: number): number {
+	private updateSpeedRelative (prevSpeedRelative: number): number {
 		const getChance = Math.random();
 		const pickChance = this._chanceUpdateSpeedRelatives.find((target) => getChance <= target.chance)!;
-
 		const speed = prevSpeedRelative + pickChance.speed;
-		gameObject.setData(DataProps.speedRelative, speed);
 		return speed;
 	}
 
