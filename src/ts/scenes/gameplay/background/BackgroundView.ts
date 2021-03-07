@@ -4,6 +4,8 @@ import { Image } from "../../../modules/gameobjects/Image";
 import { Rectangle } from "../../../modules/gameobjects/Rectangle";
 import { ScreenUtilController } from "../../../modules/screenutility/ScreenUtilController";
 
+const RIVERSIDE_DEPTH = 26;
+
 export const enum EventNames {
 	onUpdateSpeedResistance = "onUpdateSpeedResistance",
 	onCreateFinish = "onCreateFinish",
@@ -68,29 +70,30 @@ export class BackgroundView implements BaseView {
 	}
 
 	private createRiverside (): void {
-		const { width, height } = this.screenUtility;
+		const { width } = this.screenUtility;
 
 		const riverSideLeft0 = new Image(this._scene, 0, 0, Assets.forest_parallax.key);
-		riverSideLeft0.transform.setMaxPreferredDisplaySize(width, height);
-		riverSideLeft0.gameObject.setOrigin(0);
+		riverSideLeft0.transform.setToScaleDisplaySize(this._sprite.transform.displayToOriginalHeightRatio);
+		riverSideLeft0.gameObject.setOrigin(0).setDepth(RIVERSIDE_DEPTH);
 		this._backgrounds.push(riverSideLeft0);
 
 		const riverSideLeft1 = new Image(this._scene, 0, riverSideLeft0.gameObject.getBottomCenter().y, Assets.forest_parallax.key);
-		riverSideLeft1.transform.setMaxPreferredDisplaySize(width, height);
-		riverSideLeft1.gameObject.setOrigin(0);
+		riverSideLeft1.transform.setToScaleDisplaySize(this._sprite.transform.displayToOriginalHeightRatio);
+		riverSideLeft1.gameObject.setOrigin(0).setDepth(RIVERSIDE_DEPTH);
 		this._backgrounds.push(riverSideLeft1);
 
 		const riverSideRight0 = new Image(this._scene, width, 0, Assets.forest_parallax.key);
-		riverSideRight0.transform.setMaxPreferredDisplaySize(width, height);
-		riverSideRight0.gameObject.setOrigin(1, 0).setFlipX(true);
+		riverSideRight0.transform.setToScaleDisplaySize(this._sprite.transform.displayToOriginalHeightRatio);
+		riverSideRight0.gameObject.setOrigin(1, 0).setFlipX(true).setDepth(RIVERSIDE_DEPTH);
 		this._backgrounds.push(riverSideRight0);
 
 		const riverSideRight1 = new Image(this._scene, width, riverSideRight0.gameObject.getBottomCenter().y, Assets.forest_parallax.key);
-		riverSideRight1.transform.setMaxPreferredDisplaySize(width, height);
-		riverSideRight1.gameObject.setOrigin(1, 0).setFlipX(true);
+		riverSideRight1.transform.setToScaleDisplaySize(this._sprite.transform.displayToOriginalHeightRatio);
+		riverSideRight1.gameObject.setOrigin(1, 0).setFlipX(true).setDepth(RIVERSIDE_DEPTH);
 		this._backgrounds.push(riverSideRight1);
 
-		this._riversideWidth = (riverSideLeft0.gameObject.displayWidth / 2);
+		const coefThreshold = 16;
+		this._riversideWidth = (riverSideLeft0.gameObject.displayWidth / coefThreshold);
 	}
 
 	create (): void {
