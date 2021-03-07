@@ -15,6 +15,9 @@ export class LoadingSceneController extends Phaser.Scene {
 
 	constructor () {
 		super({key:SceneInfo.LOADING.key});
+
+		this.onCompleteLoadBoot = this.onCompleteLoadBoot.bind(this);
+		this.onCompleteLoad = this.onCompleteLoad.bind(this);
 	}
 
 	init (): void {
@@ -28,7 +31,9 @@ export class LoadingSceneController extends Phaser.Scene {
 	create (): void {}
 
 	loadBootResources (): void {
-		this.load.once('complete', this.onCompleteLoadBoot.bind(this));
+		this.load.once('complete', this.onCompleteLoadBoot);
+
+		// MOUNT LOADING ASSETS FILE
 		LoaderHelper.LoadAssets(this, LoadingAsset as CustomTypes.Asset.ObjectAsset);
 		this.load.start(); // Execute: onCompleteLoadBoot
 	}
@@ -43,14 +48,13 @@ export class LoadingSceneController extends Phaser.Scene {
 	}
 
 	loadResources (): void {
-		this.load.once('complete', this.onCompleteLoad.bind(this));
+		this.load.once('complete', this.onCompleteLoad);
 
 		// LOAD ALL GAME FILE HERE!
 		LoaderHelper.LoadAssets(this, OrientationAsset as CustomTypes.Asset.ObjectAsset);
 		LoaderHelper.LoadAssets(this, ErrorAsset as CustomTypes.Asset.ObjectAsset);
 		LoaderHelper.LoadAssets(this, GameplayAsset as CustomTypes.Asset.ObjectAsset);
 		LoaderHelper.LoadAssets(this, AudioAsset as CustomTypes.Asset.ObjectAsset);
-
 		this.load.start(); // Execute: onCompleteLoad
 	}
 
