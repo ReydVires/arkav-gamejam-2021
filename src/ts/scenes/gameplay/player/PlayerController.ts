@@ -15,8 +15,8 @@ export class PlayerController {
 		this._view.create(displayPercentage, edges);
 	}
 
-	registerOverlap (target: Phaser.GameObjects.GameObject | Phaser.Physics.Arcade.Group, collideCallback: ArcadePhysicsCallback): void {
-		this._view.registerOverlap(target, collideCallback);
+	registerOverlap (target: Phaser.GameObjects.GameObject | Phaser.Physics.Arcade.Group, collideCallback: ArcadePhysicsCallback): Phaser.Physics.Arcade.Collider {
+		return this._view.registerOverlap(target, collideCallback);
 	}
 
 	damaged (): void {

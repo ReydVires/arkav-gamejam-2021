@@ -105,8 +105,8 @@ export class PlayerView implements BaseView {
 		tweenEffect.play();
 	}
 
-	registerOverlap (target: Phaser.GameObjects.GameObject | Phaser.Physics.Arcade.Group, collideCallback: ArcadePhysicsCallback): void {
-		this._scene.physics.add.overlap(this._sprite.gameObject, target, collideCallback);
+	registerOverlap (target: Phaser.GameObjects.GameObject | Phaser.Physics.Arcade.Group, collideCallback: ArcadePhysicsCallback): Phaser.Physics.Arcade.Collider {
+		return this._scene.physics.add.overlap(this._sprite.gameObject, target, collideCallback);
 	}
 
 }
