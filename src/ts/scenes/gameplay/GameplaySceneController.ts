@@ -103,7 +103,7 @@ export class GameplaySceneController extends Phaser.Scene {
 			this.audioController.playSFX(Audios.sfx_lose.key, { volume: 0.9, rate: 1.15 });
 
 			this.obstacleController.obstacles().getChildren().forEach((go) => {
-				go.removeAllListeners();
+				if (go.active) go.removeAllListeners();
 			});
 			this.obstacleController.stopObstacleVelocity();
 
