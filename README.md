@@ -1,4 +1,4 @@
-# arkav-gamejam-2021
+# raka-journey
 
 <img src='https://img.shields.io/badge/Version-0.0.1-brightgreen'  alt="Version: 0.0.1"/>
 <img src='https://img.shields.io/badge/Contribution-Open-brightgreen'  alt="Contribution: Open"/>

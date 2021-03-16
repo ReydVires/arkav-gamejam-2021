@@ -1,7 +1,7 @@
 {
   "name": "raka-journey",
   "version": "0.9.85",
-  "description": "Arkav Game Jam 2021",
+  "description": "Based on Arkav Game Jam 2021",
   "main": "src/index.js",
   "author": "ReydVires",
   "repository": {
