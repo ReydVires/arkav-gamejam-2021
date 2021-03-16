@@ -238,10 +238,7 @@ export class ObstacleView implements BaseView {
 		const slower: CustomTypes.Gameplay.Obstacle.SpeedChanceType = { chance: 10, speed: 5 };
 		const chances = [faster, stay, slower];
 
-		const chanceTotal = chances.reduce((val, acc) => {
-			const reducer = { chance: val.chance + acc.chance, speed: 0 } as CustomTypes.Gameplay.Obstacle.SpeedChanceType;
-			return reducer;
-		}).chance;
+		const chanceTotal = chances.reduce((acc, val) => (acc + val.chance), 0);
 
 		this._chanceUpdateSpeedRelatives = chances.map((chanceSpeed, idx) => {
 			chanceSpeed.chance /= chanceTotal;
